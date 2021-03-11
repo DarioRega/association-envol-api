@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Repositories\ScholarshipsRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ScholarshipsService
 {
@@ -39,23 +40,36 @@ class ScholarshipsService
 
     }
 
-    public function uploadScholarshipFiles($data, $scholarshipId = 2){
-//        print_r($data);
-//        foreach($data['file'] as $file){
-//            echo $file;
-//        }
-//            $dirName = $this->slugify($request->fullName).'__'.time();
-//
-//            $path = Storage::disk('local')->put($typeDirectory->name, $file);
-//            $full_path = '/storage/' . $path;
-//
-//            $document->srcUrl = $full_path;
-//
-//        }
+    public function uploadScholarshipFiles($data, $scholarshipId){
+        $createdFiles = [];
+        $fileData = [];
+        $fileData['scholarship_id'] = $scholarshipId;
+        foreach($data['files'] as $file){
+            $dirName = self::generateUserDirectory($data['fullName']);
+            $baseDirectory = self::getBaseDirectory();
+            $fileData['scholarship_id'] = $scholarshipId;
+            $fileData['name'] = $file->getClientOriginalName();
+
+            $fileData['srcUrl'] = Storage::disk('local')->put($baseDirectory.'/'.$dirName, $file);
+
+            array_push($createdFiles, $this->scholarshipsRepository->createFile($fileData));
+        }
+        return $createdFiles;
     }
 
     public function slugify($string){
         return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string)));
+    }
+
+    public function generateUserDirectory($name){
+        $slugifiedName = $this->slugify($name);
+        $date = date('d-m-Y__H-i-s');
+        return $slugifiedName.'__'.$date;
+    }
+
+    public function getBaseDirectory(){
+        $actualYear = date('Y');
+        return 'demandes-de-bourses/'.$actualYear;
     }
 
 }

@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\Scholarship;
+use App\Models\DocumentsScholarship;
 
 class ScholarshipsRepository
 {
@@ -22,9 +23,15 @@ class ScholarshipsRepository
         return $scholarship->fresh();
     }
 
-    public function linkFiles($data)
+    public function createFile($data)
     {
+        $scholarshipDocument = DocumentsScholarship::create([
+            'name'=> $data['name'],
+            'srcUrl' => $data['srcUrl'],
+            'scholarship_id' => $data['scholarship_id'],
+        ]);
 
+        return $scholarshipDocument->fresh();
     }
 
 }

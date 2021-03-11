@@ -12,12 +12,12 @@ use PHPUnit\Exception;
 
 class ScholarshipController extends Controller
 {
-//    protected $scholarshipsService;
+    protected $scholarshipsService;
 //
-//    public function __construct(ScholarshipsService $scholarshipsService)
-//    {
-//        $this->scholarshipsService = $scholarshipsService;
-//    }
+    public function __construct(ScholarshipsService $scholarshipsService)
+    {
+        $this->scholarshipsService = $scholarshipsService;
+    }
 
     public function create(Request $request)
     {
@@ -25,63 +25,28 @@ class ScholarshipController extends Controller
 //            'file' => 'required',
 //            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
 //        ]);
-//        $data = $request->only([
-//            'gender',
-//            'fullName',
-//            'email',
-//            'birthdate',
-//            'remarks',
-//        ]);
-//        foreach($request->files as $file) {
-//            echo $file->getClientOriginalName();
-//        }
-        return ['email' => $request->all()];
 
-
-
-
-
-
-
-
-
-
-
-//        return $request->email;
-//        $data = [];
-//        return $request->all();
-//        echo $request->email;
-//        print_r($data);
-
-//        print_r($request->all());
-//        $result = ['status' => 200];
-
-//            $linkedFiles =  $this->scholarshipsService->uploadScholarshipFiles($data, 2);
-//        try {
-//            $scholarshipModel =  $this->scholarshipsService->createScholarship($data);
-//            $linkedFiles =  $this->scholarshipsService->uploadScholarshipFiles($data, $scholarshipModel->id);
-
-
-//            $result['data'] = $scholarshipModel;
-//        } catch(Exception $e){
-//            $result = [
-//                'status' => 500,
-//                'error' => $e->getMessage()
-//            ];
-//        }
-//        return response()->json($result, $result['status']);
-//        foreach($request->file('file') as $file){
-//            $dirName = $this->slugify($request->fullName).'__'.time();
-//
-//            $path = Storage::disk('local')->put($typeDirectory->name, $file);
-//            $full_path = '/storage/' . $path;
-//
-//            $document->srcUrl = $full_path;
-//
-//        }
-
-
-//
+        $data = $request->only([
+            'gender',
+            'fullName',
+            'email',
+            'birthdate',
+            'remarks',
+            'files'
+        ]);
+        $result = ['status' => 200];
+        try {
+            $scholarshipModel =  $this->scholarshipsService->createScholarship($data);
+            $linkedFiles =  $this->scholarshipsService->uploadScholarshipFiles($data, $scholarshipModel->id);
+            $result['data'] = $scholarshipModel;
+//            $result['data']['files'] = $linkedFiles;
+        } catch(Exception $e){
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+        return response()->json($result, $result['status']);
 //        try {
 //            Mail::to('dario.regazzoni@outlook.fr')->send(new ContactRequestMail($contact));
 //        } catch(Swift_TransportException $transportExp) {

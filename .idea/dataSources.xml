@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="envol_dev@localhost" uuid="28d6464a-6173-4a09-88fb-4ab3d306e9ae">
+    <data-source source="LOCAL" name="envol_dev@localhost" uuid="092f5a81-d014-443b-a6bc-e46d8c6612cd">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
