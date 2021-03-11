@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RapportsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,7 @@ Route::get('rapports',[RapportsController::class,'show']);
 
 Route::post('rapports',[RapportsController::class,'upload']);
 
-Route::post('contact','ContactController@contact');
+Route::post('contact',[ContactController::class,'contact']);
 
 Route::get('scholarship','ScholarshipController@create');
 
