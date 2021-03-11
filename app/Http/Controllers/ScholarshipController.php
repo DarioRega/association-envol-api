@@ -39,7 +39,7 @@ class ScholarshipController extends Controller
             $scholarshipModel =  $this->scholarshipsService->createScholarship($data);
             $linkedFiles =  $this->scholarshipsService->uploadScholarshipFiles($data, $scholarshipModel->id);
             $result['data'] = $scholarshipModel;
-//            $result['data']['files'] = $linkedFiles;
+            $result['data']['files'] = $linkedFiles;
         } catch(Exception $e){
             $result = [
                 'status' => 500,
