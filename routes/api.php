@@ -3,6 +3,7 @@
 use App\Http\Controllers;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RapportsController;
+use App\Http\Controllers\ScholarshipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +29,7 @@ Route::post('rapports',[RapportsController::class,'upload']);
 
 Route::post('contact',[ContactController::class,'contact']);
 
-Route::get('scholarship','ScholarshipController@create');
+Route::post('scholarship',[ScholarshipController::class, 'create']);
 
 
 

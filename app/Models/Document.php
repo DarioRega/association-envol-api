@@ -39,4 +39,6 @@ class Document extends Model
     public function type(){
         return $this->belongsTo(Type::class);
     }
+
+
 }

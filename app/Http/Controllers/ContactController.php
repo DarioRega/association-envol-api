@@ -18,7 +18,7 @@ class ContactController extends Controller
 //        ]);
 
         $contactRequest = new Contact();
-        $genderArray = config('enums.sex');
+        $genderArray = config('enums.gender');
 
         $contactRequest->gender = $genderArray[$request->gender];
         $contactRequest->fullName = $request->fullName;

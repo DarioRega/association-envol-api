@@ -1,6 +1,6 @@
 <?php
     return [
-        'sex' => [
+        'gender' => [
             1 => "Madame",
             2 => "Monsieur",
         ]
