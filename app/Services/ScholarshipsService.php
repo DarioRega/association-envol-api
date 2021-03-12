@@ -8,6 +8,7 @@ use App\Repositories\ScholarshipsRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class ScholarshipsService
 {
@@ -39,13 +40,12 @@ class ScholarshipsService
 
     public function uploadScholarshipFiles($data, $scholarshipId): array
     {
-
         $createdFiles = [];
         $fileData = [];
         $fileData['scholarship_id'] = $scholarshipId;
         foreach($data['files'] as $file){
 
-            $dirName = self::generateUserDirectory($data['fullName']);
+            $dirName = self::generateUserDirectory($data['fullName'], $scholarshipId);
             $baseDirectory = self::getBaseDirectory();
             $fileData['scholarship_id'] = $scholarshipId;
             $fileData['name'] = $file->getClientOriginalName();
@@ -60,16 +60,34 @@ class ScholarshipsService
         return $createdFiles;
     }
 
+    public function generateZip($files, $userFullName, $scholarshipId)
+    {
+        $zip = new ZipArchive;
+
+        $dirPath = self::getBaseDirectory().'/'.self::generateUserDirectory($userFullName, $scholarshipId);
+        $zipFileName = self::slugify($userFullName).'-'.$scholarshipId.'.zip';
+        $storagePath = storage_path().'/app';
+
+        //echo storage_path($te);
+        if($zip->open($storagePath.'/'.$dirPath.'/'.$zipFileName, ZipArchive::CREATE) === TRUE){
+           foreach($files as $file) {
+                $zip->addFile($storagePath.'/'.$file['srcUrl'], $file['name']);
+            }
+        $zip->close();
+        }
+
+        return ['zipPath' => $dirPath.'/'.$zipFileName, 'zipName' => $zipFileName];
+    }
+
     public function slugify($string): string
     {
         return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string)));
     }
 
-    public function generateUserDirectory($name): string
+    public function generateUserDirectory($name, $scholarshipId): string
     {
         $slugifiedName = $this->slugify($name);
-        $date = date('d-m-Y__H-i-s');
-        return $slugifiedName.'__'.$date;
+        return $scholarshipId.'_'.$slugifiedName;
     }
 
     public function getBaseDirectory(): string

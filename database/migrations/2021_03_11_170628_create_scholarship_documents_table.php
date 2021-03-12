@@ -15,7 +15,7 @@ class CreateScholarshipDocumentsTable extends Migration
     {
         Schema::create('documents_scholarships', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('srcUrl');
             $table->string('mimeType');
             $table->unsignedBigInteger('scholarship_id');
