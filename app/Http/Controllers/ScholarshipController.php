@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactRequestMail;
+use App\Mail\ScholarshipRequestMail;
 use App\Models\Scholarship;
 use App\Services\ScholarshipsService;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class ScholarshipController extends Controller
 //            'file' => 'required',
 //            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
 //        ]);
+//        $allowed_extensions = array("jpg", "jpeg", "png", "bmp", "odf", "doc", "docx", "pdf", "txt", "xlt", "xls", "xml");
 
         $data = $request->only([
             'gender',
@@ -42,17 +44,22 @@ class ScholarshipController extends Controller
             $result['data']['files'] = $linkedFiles;
         } catch(Exception $e){
             $result = [
-                'status' => 500,
-                'error' => $e->getMessage()
+                'status' => 400,
+                'error' => "Une erreur est survenue lors du traitement de votre bourse, si le problème persiste, veuillez contacter notre secretariat."
+            ];
+            return response()->json($result, $result['status']);
+        }
+        try {
+            Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
+            $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
+        } catch(Swift_TransportException $transportExp) {
+            $result = [
+            'status' => 400,
+            'error' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre demande de bourse a été téléchargée.<br> Veuillez contacter notre secretariat en leur indiquant que votre demande de bourse est en statut <b>202</b>."
             ];
         }
+
         return response()->json($result, $result['status']);
-//        try {
-//            Mail::to('dario.regazzoni@outlook.fr')->send(new ContactRequestMail($contact));
-//        } catch(Swift_TransportException $transportExp) {
-//            return response("<p>Une erreur est survenue lors de l'envoi, nous en sommes désolés.</p><p>Si le problème presiste veuillez nous contacter directement via notre email.</p>", 400);
-//        }
-//        return response("<p>Mail envoyé avec succès, nous reviendrons vers vous dès que possible.</p>", 200);
     }
 
 

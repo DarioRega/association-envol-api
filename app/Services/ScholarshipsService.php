@@ -24,7 +24,7 @@ class ScholarshipsService
 
         $genderArray = config('enums.gender');
         $data['gender'] = $genderArray[$data['gender']];
-
+        $data['age'] = self::getAgeFromBirthdate($data['birthdate']);
         try {
             $scholarshipModel = $this->scholarshipsRepository->save($data);
         } catch (Exception $e) {
@@ -70,6 +70,25 @@ class ScholarshipsService
     public function getBaseDirectory(){
         $actualYear = date('Y');
         return 'demandes-de-bourses/'.$actualYear;
+    }
+
+    public function getAgeFromBirthdate($rawBirthdate){
+        $birthdate = '';
+
+        if(strpos($rawBirthdate, '.') !== false){
+            $format = str_replace('-', '.', $rawBirthdate);
+             $birthdate = date_create($rawBirthdate);
+        } elseif (strpos($rawBirthdate, '/') !== false){
+            $format = str_replace('-', '/', $rawBirthdate);
+            $birthdate = date_create($rawBirthdate);
+        } elseif (strpos($rawBirthdate, '-') !== false){
+            $birthdate = date_create($rawBirthdate);
+        }
+        if(!$birthdate){
+            return '';
+        }
+        $today =
+
     }
 
 }
