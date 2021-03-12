@@ -53,8 +53,13 @@ class ScholarshipController extends Controller
             return response()->json($result, $result['status']);
         }
         $zipResult = $this->scholarshipsService->generateZip($result['data']['files'], $result['data']['fullName'], $result['data']['id']);
-        $result['data']['zipPath'] = $zipResult['zipPath'];
-        $result['data']['zipName'] = $zipResult['zipName'];
+
+        if(isset($zipResult['zipPath'])){
+            $result['data']['zipPath'] = $zipResult['zipPath'];
+            $result['data']['zipName'] = $zipResult['zipName'];
+        } else {
+            Log::warning('Zip file generation is not working');
+        }
         try {
             Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
             $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";

@@ -60,23 +60,24 @@ class ScholarshipsService
         return $createdFiles;
     }
 
-    public function generateZip($files, $userFullName, $scholarshipId)
+    public function generateZip($files, $userFullName, $scholarshipId): array
     {
         $zip = new ZipArchive;
 
         $dirPath = self::getBaseDirectory().'/'.self::generateUserDirectory($userFullName, $scholarshipId);
-        $zipFileName = self::slugify($userFullName).'-'.$scholarshipId.'.zip';
+        $zipFileName = $scholarshipId.'_'.self::slugify($userFullName).'.zip';
         $storagePath = storage_path().'/app';
 
-        //echo storage_path($te);
         if($zip->open($storagePath.'/'.$dirPath.'/'.$zipFileName, ZipArchive::CREATE) === TRUE){
            foreach($files as $file) {
                 $zip->addFile($storagePath.'/'.$file['srcUrl'], $file['name']);
             }
         $zip->close();
         }
-
-        return ['zipPath' => $dirPath.'/'.$zipFileName, 'zipName' => $zipFileName];
+        if(file_exists($storagePath.'/'.$dirPath.'/'.$zipFileName)) {
+            return ['zipPath' => $dirPath.'/'.$zipFileName, 'zipName' => $zipFileName];
+        }
+        return [];
     }
 
     public function slugify($string): string

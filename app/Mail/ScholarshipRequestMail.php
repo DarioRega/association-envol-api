@@ -33,12 +33,17 @@ class ScholarshipRequestMail extends Mailable
     {
         $email = $this->view('emails.ScholarshipRequestMail')->subject('Nouvelle demande de bourse en ligne');
 
-           $email->attachFromStorage($this->details['zipPath'], $this->details['zipName'], [
-                'mime' => 'application/octet-stream',
-            ]);
-       /*foreach ($this->details['files'] as $file) {
-        }*/
-
+            if(isset($this->details['zipPath'])){
+               $email->attachFromStorage($this->details['zipPath'], $this->details['zipName'], [
+                    'mime' => 'application/octet-stream',
+                ]);
+            } else {
+                foreach ($this->details['files'] as $file) {
+                    $email->attachFromStorage($file['srcUrl'], $file['name'], [
+                        'mime' => $file['mimeType'],
+                    ]);
+                }
+            }
         return $email;
     }
 }
