@@ -36,7 +36,7 @@ use Illuminate\Database\Eloquent\Model;
 class Scholarship extends Model
 {
     use HasFactory;
-    protected $fillable = ['sex', 'fullName', 'email', 'remarks','birthdate','gender'];
+    protected $fillable = ['fullName', 'email', 'remarks','birthdate','gender'];
 
     public function documents()
     {

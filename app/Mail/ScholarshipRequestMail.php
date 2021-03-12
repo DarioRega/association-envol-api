@@ -10,7 +10,10 @@ use Illuminate\Queue\SerializesModels;
 class ScholarshipRequestMail extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $details;
+    public $path;
+
     /**
      * Create a new message instance.
      *
@@ -28,7 +31,12 @@ class ScholarshipRequestMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Nouvelle demande de bourse en ligne')
-            ->view('emails.ScholarshipRequestMail');
+        $email = $this->view('emails.ScholarshipRequestMail')->subject('Nouvelle demande de bourse en ligne');
+
+        // $attachments is an array with file paths of attachments
+        foreach ($this->details['files'] as $file) {
+            $email->attachFromStorage($file['srcUrl']);
+        }
+        return $email;
     }
 }
