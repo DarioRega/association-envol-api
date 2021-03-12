@@ -12,7 +12,6 @@ class ScholarshipRequestMail extends Mailable
     use Queueable, SerializesModels;
 
     public $details;
-    public $path;
 
     /**
      * Create a new message instance.

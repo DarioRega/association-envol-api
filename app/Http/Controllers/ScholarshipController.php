@@ -52,26 +52,9 @@ class ScholarshipController extends Controller
             ];
             return response()->json($result, $result['status']);
         }
-        $zipResult = $this->scholarshipsService->generateZip($result['data']['files'], $result['data']['fullName'], $result['data']['id']);
+        $this->scholarshipsService->notifyEnvolAndUserNewScholarshipRequest($result);
 
-        if(isset($zipResult['zipPath'])){
-            $result['data']['zipPath'] = $zipResult['zipPath'];
-            $result['data']['zipName'] = $zipResult['zipName'];
-        } else {
-            Log::warning('Zip file generation is not working');
-        }
-        try {
-            Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
-            $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
-        } catch(\Swift_TransportException $e) {
-            Log::warning($e->getMessage());
-            $result = [
-                'status' => 400,
-                'error' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre demande de bourse a été téléchargée.<br> Veuillez contacter notre secretariat en leur indiquant que votre demande de bourse est en statut <b>202</b>."
-            ];
-        }
-
-        return response()->json($result, $result['status']);
+        return response()->json($message = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement." , $result['status']);
     }
 
 }

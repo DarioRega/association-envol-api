@@ -4,9 +4,12 @@
 namespace App\Services;
 
 
+use App\Mail\ScholarshipConfirmationMail;
+use App\Mail\ScholarshipRequestMail;
 use App\Repositories\ScholarshipsRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -58,6 +61,43 @@ class ScholarshipsService
             }
         }
         return $createdFiles;
+    }
+
+
+    public function notifyEnvolAndUserNewScholarshipRequest($result){
+
+        $zipResult = self::generateZip($result['data']['files'], $result['data']['fullName'], $result['data']['id']);
+
+        if(isset($zipResult['zipPath'])){
+            $result['data']['zipPath'] = $zipResult['zipPath'];
+            $result['data']['zipName'] = $zipResult['zipName'];
+        } else {
+            Log::warning('Zip file generation is not working');
+        }
+
+        try {
+            Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
+            $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
+        } catch(\Swift_TransportException $e) {
+            Log::warning($e->getMessage());
+            $result = [
+                'status' => 400,
+                'error' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre demande de bourse a été téléchargée.<br> Veuillez contacter notre secretariat en leur indiquant que votre demande de bourse est en statut <b>202</b>."
+            ];
+        }
+        self::notifyUserSuccessScholarshipRequest($result['data']);
+    }
+
+    public function notifyUserSuccessScholarshipRequest($data){
+        try {
+            Mail::to($data['email'])->send(new ScholarshipConfirmationMail($data));
+        } catch(\Swift_TransportException $e) {
+            Log::warning($e->getMessage());
+            $result = [
+                'status' => 417,
+                'error' => "Une erreur est survenue durant l'envoi du mail de confirmation pour votre boîte mail. Cependant votre demande de bourse a été prise en compte. nous vous recontacterons prochainement."
+            ];
+        }
     }
 
     public function generateZip($files, $userFullName, $scholarshipId): array
