@@ -25,9 +25,11 @@ class ScholarshipsRepository
 
     public function createFile($data)
     {
+
         $scholarshipDocument = DocumentsScholarship::create([
             'name'=> $data['name'],
             'srcUrl' => $data['srcUrl'],
+            'mimeType' => $data['mimeType'],
             'scholarship_id' => $data['scholarship_id'],
         ]);
 

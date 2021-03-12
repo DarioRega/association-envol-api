@@ -28,12 +28,14 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Scholarship[] $scholarships
  * @property-read int|null $scholarships_count
+ * @property string $mimeType
+ * @method static \Illuminate\Database\Eloquent\Builder|DocumentsScholarship whereMimeType($value)
  */
 class DocumentsScholarship extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'srcUrl','scholarship_id'];
+    protected $fillable = ['name', 'srcUrl', 'mimeType', 'scholarship_id'];
 
     public function scholarships()
     {

@@ -23,12 +23,14 @@ class ScholarshipController extends Controller
 
     public function create(Request $request)
     {
+
         //        request()->validate([
 //            'file' => 'required',
 //            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
 //        ]);
 //        $allowed_extensions = array("jpg", "jpeg", "png", "bmp", "odf", "doc", "docx", "pdf", "txt", "xlt", "xls", "xml");
-        $data = $request->only([
+
+            $data = $request->only([
             'gender',
             'fullName',
             'email',
@@ -36,6 +38,7 @@ class ScholarshipController extends Controller
             'remarks',
             'files'
         ]);
+
         $result = ['status' => 200];
         try {
             $scholarshipModel =  $this->scholarshipsService->createScholarship($data);

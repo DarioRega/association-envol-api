@@ -39,29 +39,25 @@ class ScholarshipsService
 
     public function uploadScholarshipFiles($data, $scholarshipId): array
     {
-        DB::beginTransaction();
 
         $createdFiles = [];
         $fileData = [];
         $fileData['scholarship_id'] = $scholarshipId;
         foreach($data['files'] as $file){
+
             $dirName = self::generateUserDirectory($data['fullName']);
             $baseDirectory = self::getBaseDirectory();
             $fileData['scholarship_id'] = $scholarshipId;
             $fileData['name'] = $file->getClientOriginalName();
-
+            $fileData['mimeType'] = $file->getMimeType();
             $fileData['srcUrl'] = Storage::disk('local')->put($baseDirectory.'/'.$dirName, $file);
             try {
                 array_push($createdFiles, $this->scholarshipsRepository->createFile($fileData));
             } catch (Exception $e) {
-                DB::rollBack();
                 Log::error($e->getMessage());
             }
         }
         return $createdFiles;
-
-        DB::commit();
-
     }
 
     public function slugify($string): string

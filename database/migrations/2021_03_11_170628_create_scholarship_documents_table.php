@@ -17,6 +17,7 @@ class CreateScholarshipDocumentsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('srcUrl');
+            $table->string('mimeType');
             $table->unsignedBigInteger('scholarship_id');
             $table->foreign('scholarship_id')->references('id')->on('scholarships')->onDelete('cascade');
             $table->timestamps();

@@ -33,9 +33,10 @@ class ScholarshipRequestMail extends Mailable
     {
         $email = $this->view('emails.ScholarshipRequestMail')->subject('Nouvelle demande de bourse en ligne');
 
-        // $attachments is an array with file paths of attachments
-        foreach ($this->details['files'] as $file) {
-            $email->attachFromStorage($file['srcUrl']);
+       foreach ($this->details['files'] as $file) {
+           $email->attachFromStorage($file['srcUrl'], $file['name'], [
+                'mime' => $file['mimeType'],
+            ]);
         }
         return $email;
     }
