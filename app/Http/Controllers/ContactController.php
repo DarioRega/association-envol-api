@@ -12,25 +12,25 @@ class ContactController extends Controller
 {
     public function contact(Request $request)
     {
-//EDIT ERRORS VALUES FOR FRONT =>
-//        resources/lang/en/validation.php
         request()->validate([
             'fullName' => ['required'],
             'email' => ['required', 'email'],
             'subject' => ['required'],
             'message' => ['required'],
         ]);
-        $contactRequest = new Contact();
-        $genderArray = config('enums.gender');
 
-        $contactRequest->gender = $genderArray[$request->gender];
+        $genderArray = config('enums.gender');
+        $gender = $genderArray[$request->gender];
+
+        $contactRequest = new Contact();
+        $contactRequest->gender = $gender ? $gender : 'Inconnu';
         $contactRequest->fullName = $request->fullName;
         $contactRequest->email = $request->email;
         $contactRequest->phoneNumber = $request->phoneNumber;
         $contactRequest->subject = $request->subject;
         $contactRequest->message = $request->message;
-        $contactRequest->save();
 
+        $contactRequest->save();
         $contact = Contact::find($contactRequest->id);
 
         try {

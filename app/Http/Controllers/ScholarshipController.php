@@ -23,14 +23,16 @@ class ScholarshipController extends Controller
 
     public function create(Request $request)
     {
+        request()->validate([
+            'fullName' => ['required'],
+            'email' => ['required', 'email'],
+            'files' => ['required'],
+        ]);
 
-        //        request()->validate([
-//            'file' => 'required',
-//            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
-//        ]);
-//        $allowed_extensions = array("jpg", "jpeg", "png", "bmp", "odf", "doc", "docx", "pdf", "txt", "xlt", "xls", "xml");
+        $result = ['status' => 200];
+        $allowed_extensions = array("jpg", "jpeg", "png", "bmp", "odf", "doc", "docx", "pdf", "txt", "xlt", "xls", "xml");
 
-            $data = $request->only([
+        $data = $request->only([
             'gender',
             'fullName',
             'email',
@@ -38,10 +40,17 @@ class ScholarshipController extends Controller
             'remarks',
             'files'
         ]);
+        $data['remarks'] = empty($data['remarks']) ? 'Aucune' : $data['remarks'];
+        foreach($data['files'] as $file) {
+            $extension = $file->getClientOriginalExtension();
+            if(!in_array($extension, $allowed_extensions)){
+                $result['status'] = 404;
+                $fileName = $file->getClientOriginalName();
+                $result['message'] = 'Le fichier <b>'.$fileName.'</b> n\'est pas un fichier valide.<br> Les types de fichiers admis sont:<br>jpg, jpeg, png, bmp, odf, doc, docx, pdf, txt, xlt, xls, xml' ;
+                return response()->json(['message' => $result['message']], $result['status']);
+            }
+        }
 
-        $result = ['status' => 200];
-        $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
-        return response()->json(['message' => $result['message']], $result['status']);
         try {
             $scholarshipModel =  $this->scholarshipsService->createScholarship($data);
 
