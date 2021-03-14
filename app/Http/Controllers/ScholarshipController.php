@@ -40,6 +40,8 @@ class ScholarshipController extends Controller
         ]);
 
         $result = ['status' => 200];
+        $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
+        return response()->json(['message' => $result['message']], $result['status']);
         try {
             $scholarshipModel =  $this->scholarshipsService->createScholarship($data);
 
@@ -48,13 +50,15 @@ class ScholarshipController extends Controller
         } catch(Exception $e){
             $result = [
                 'status' => 400,
-                'error' => "Une erreur est survenue lors du traitement de votre bourse, si le problème persiste, veuillez contacter notre secretariat."
+                'message' => "Une erreur est survenue lors du traitement de votre bourse, si le problème persiste, veuillez contacter notre secretariat."
             ];
-            return response()->json($result, $result['status']);
+            return response()->json(['message' => $result['message']], $result['status']);
         }
-        $this->scholarshipsService->notifyEnvolAndUserNewScholarshipRequest($result);
+        $result = $this->scholarshipsService->notifyEnvolAndUserNewScholarshipRequest($result);
 
-        return response()->json($message = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement." , $result['status']);
+        $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
+        return response()->json(['message' => $result['message']], $result['status']);
     }
+
 
 }

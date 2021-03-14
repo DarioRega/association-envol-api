@@ -12,11 +12,14 @@ class ContactController extends Controller
 {
     public function contact(Request $request)
     {
-        //        request()->validate([
-//            'file' => 'required',
-//            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
-//        ]);
-
+//EDIT ERRORS VALUES FOR FRONT =>
+//        resources/lang/en/validation.php
+        request()->validate([
+            'fullName' => ['required'],
+            'email' => ['required', 'email'],
+            'subject' => ['required'],
+            'message' => ['required'],
+        ]);
         $contactRequest = new Contact();
         $genderArray = config('enums.gender');
 
@@ -33,8 +36,8 @@ class ContactController extends Controller
         try {
             Mail::to('dario.regazzoni@outlook.fr')->send(new ContactRequestMail($contact));
         } catch(Swift_TransportException $transportExp) {
-           return response("<p>Une erreur est survenue lors de l'envoi, nous en sommes désolés.</p><p>Si le problème presiste veuillez nous contacter directement via notre email.</p>", 400);
+           return response(['message' => "<p>Une erreur est survenue lors de l'envoi, nous en sommes désolés.</p><p>Si le problème presiste veuillez nous contacter directement via notre email.</p>"], 400);
         }
-        return response("<p>Mail envoyé avec succès, nous reviendrons vers vous dès que possible.</p>", 200);
+        return response(['message' => "<p>Mail envoyé avec succès, nous reviendrons vers vous dès que possible.</p>"], 200);
     }
 }

@@ -22,14 +22,15 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-//Route::get(['prefix' => 'api'], function () use ($router) {
-Route::get('rapports',[RapportsController::class,'show']);
 
-Route::post('rapports',[RapportsController::class,'upload']);
 
-Route::post('contact',[ContactController::class,'contact']);
+Route::get('rapports', [RapportsController::class, 'show']);
 
-Route::post('scholarship',[ScholarshipController::class, 'create']);
+Route::post('rapports', [RapportsController::class, 'upload']);
+
+Route::post('contact', [ContactController::class, 'contact']);
+
+Route::post('scholarship', [ScholarshipController::class, 'create']);
 
 
 

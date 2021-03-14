@@ -32,7 +32,7 @@ class ScholarshipsService
             $scholarshipModel = $this->scholarshipsRepository->save($data);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error($e->getMessage());
+//            Log::error($e->getMessage());
             throw new InvalidArgumentException('Unable to delete post data');
         }
 
@@ -57,47 +57,50 @@ class ScholarshipsService
             try {
                 array_push($createdFiles, $this->scholarshipsRepository->createFile($fileData));
             } catch (Exception $e) {
-                Log::error($e->getMessage());
+//                Log::error($e->getMessage());
             }
         }
         return $createdFiles;
     }
 
 
-    public function notifyEnvolAndUserNewScholarshipRequest($result){
+    public function notifyEnvolAndUserNewScholarshipRequest($result): array
+    {
 
         $zipResult = self::generateZip($result['data']['files'], $result['data']['fullName'], $result['data']['id']);
 
-        if(isset($zipResult['zipPath'])){
+        if (isset($zipResult['zipPath'])) {
             $result['data']['zipPath'] = $zipResult['zipPath'];
             $result['data']['zipName'] = $zipResult['zipName'];
         } else {
-            Log::warning('Zip file generation is not working');
+//            Log::warning('Zip file generation is not working');
         }
 
         try {
             Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
             $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
-        } catch(\Swift_TransportException $e) {
-            Log::warning($e->getMessage());
+        } catch (\Swift_TransportException $e) {
+//            Log::warning($e->getMessage());
             $result = [
                 'status' => 400,
-                'error' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre demande de bourse a été téléchargée.<br> Veuillez contacter notre secretariat en leur indiquant que votre demande de bourse est en statut <b>202</b>."
+                'message' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre demande de bourse a été téléchargée.<br> Veuillez contacter notre secretariat en leur indiquant que votre demande de bourse est en statut <b>202</b>."
             ];
         }
-        self::notifyUserSuccessScholarshipRequest($result['data']);
+
+        try {
+            self::notifyUserSuccessScholarshipRequest($result['data']);
+        } catch (\Swift_TransportException $e) {
+//            Log::warning($e->getMessage());
+            $result = [
+                'status' => 417,
+                'message' => "Une erreur est survenue durant l'envoi du mail de confirmation pour votre boîte mail. Cependant votre demande de bourse a été prise en compte. nous vous recontacterons prochainement."
+            ];
+        }
+        return $result;
     }
 
     public function notifyUserSuccessScholarshipRequest($data){
-        try {
-            Mail::to($data['email'])->send(new ScholarshipConfirmationMail($data));
-        } catch(\Swift_TransportException $e) {
-            Log::warning($e->getMessage());
-            $result = [
-                'status' => 417,
-                'error' => "Une erreur est survenue durant l'envoi du mail de confirmation pour votre boîte mail. Cependant votre demande de bourse a été prise en compte. nous vous recontacterons prochainement."
-            ];
-        }
+        Mail::to($data['email'])->send(new ScholarshipConfirmationMail($data));
     }
 
     public function generateZip($files, $userFullName, $scholarshipId): array
