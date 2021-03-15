@@ -2,8 +2,10 @@
 
 use App\Http\Controllers;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RapportsController;
 use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,9 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
+Route::get('/products', [ProductController::class,'index']);
+
+Route::get('/donate', [UserController::class,'donate']);
 
 
 Route::get('rapports', [RapportsController::class, 'show']);
