@@ -24,9 +24,12 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
+Route::get('/products/metadata', [ProductController::class,'metadata']);
+
 Route::get('/products', [ProductController::class,'index']);
 
-Route::get('/donate', [UserController::class,'donate']);
+
+Route::post('/donate/session', [ProductController::class,'session']);
 
 
 Route::get('rapports', [RapportsController::class, 'show']);
