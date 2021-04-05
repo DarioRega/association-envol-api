@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/products/metadata', [ProductController::class,'metadata']);
 
+Route::post('/products/prices/findOrCreate', [ProductController::class,'findOrCreate']);
+
 Route::get('/products', [ProductController::class,'index']);
 
 

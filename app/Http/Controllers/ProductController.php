@@ -46,18 +46,20 @@ class ProductController extends Controller
         return response()->json(['intervals' => $intervals, 'amounts' => $amounts]);
     }
 
+    public function priceCreate(Request $request) {
+        $amount = $request->input('amount');
+        $interval = $request->input('interval');
+    }
     public function findOrCreate(Request $request){
+        $selected_amount = $request->input('selected_amount');
+        $selected_interval = $request->input('selected_interval');
 
+        $price = $this->stripeService->findOrCreatePrice($selected_amount, $selected_interval);
+        return response()->json($price);
     }
 
     public function session(Request $request){
-        if ($request->has('sessionTarget')) {
-            $target = $request->input('sessionTarget');
-        } else {
-            $target = 'one_time_payment';
-        }
-
-        $sessionId =  $target === 'subscription' ? $this->stripeService->createSessionSubscription() :  $this->stripeService->createSessionOneTimePayment() ;
+        $sessionId =  $this->stripeService->createSession($request->input('price'), $request->input('sessionId')) ;
      return response()->json(['id' => $sessionId]);
     }
 
