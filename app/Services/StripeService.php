@@ -75,16 +75,17 @@ class StripeService
         return $createdPrice;
     }
 
-    public function createSession($price, $client_session){
+    public function createSession($data){
         $checkout_session = $this->stripe->checkout->sessions->create([
             'payment_method_types' => ['card'],
             'line_items' => [[
-                'price' => $price['id'],
+                'price' => $data['price']['id'],
                 'quantity' => 1,
             ]],
-            'mode' => $price['type'] == 'one_time' ? 'payment' : 'subscription',
-            'success_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$client_session.'&success=true',
-            'cancel_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$client_session.'canceled=true',
+            'customer_email' => $data['email'],
+            'mode' => $data['price']['type'] == 'one_time' ? 'payment' : 'subscription',
+            'success_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&success=true',
+            'cancel_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&canceled=true',
         ]);
 
         return $checkout_session->id;

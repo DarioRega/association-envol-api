@@ -63,7 +63,12 @@ class ProductController extends Controller
     }
 
     public function session(Request $request){
-        $sessionId =  $this->stripeService->createSession($request->input('price'), $request->input('sessionId')) ;
+        $data = $request->only([
+            'price',
+            'client_session',
+            'email',
+        ]);
+        $sessionId =  $this->stripeService->createSession($data) ;
      return response()->json(['id' => $sessionId]);
     }
 
