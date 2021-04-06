@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DonationNotificationToEnvol;
+use App\Mail\ScholarshipRequestMail;
 use App\Models\Interval;
 use App\Models\MainAmount;
 use App\Services\StripeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ProductController extends Controller
 {
@@ -50,6 +53,7 @@ class ProductController extends Controller
         $amount = $request->input('amount');
         $interval = $request->input('interval');
     }
+
     public function findOrCreate(Request $request){
         $selected_amount = $request->input('selected_amount');
         $selected_interval = $request->input('selected_interval');
@@ -63,5 +67,30 @@ class ProductController extends Controller
      return response()->json(['id' => $sessionId]);
     }
 
-    //TODO ADD METHOD TO GET ONLY THE MAIN FOR THE FRONT
+    public function thankYou(Request $request){
+        $data = $request->only([
+            'amount',
+            'interval',
+            'payment_method',
+            'full_name',
+            'company_name',
+            'email',
+            'commentary',
+            'created_at'
+        ]);
+        $result = [
+            'status' => 204,
+        ];
+
+        try {
+            Mail::to('dario.regazzoni@outlook.fr')->send(new DonationNotificationToEnvol($data));
+        } catch (\Swift_TransportException $e) {
+//            Log::warning($e->getMessage());
+            $result = [
+                'status' => 400,
+                'message' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre donation à été prise en compte."
+            ];
+        }
+        return response()->json($result);
+    }
 }
