@@ -32,7 +32,7 @@
 
     <div style="display:flex; justify-content:start;align-items: start">
         <p style="flex:none">Récurrence : </p>
-        <p style="flex: 1 1 0;margin-left:5px;">{{ $details['interval'] }}</p>
+        <p style="flex: 1 1 0;margin-left:5px;">{{ $details['selectedInterval']['name'] }}</p>
     </div>
 
     <div style="display:flex; justify-content:start;align-items: start">

@@ -81,7 +81,8 @@ class ProductController extends Controller
             'company_name',
             'email',
             'commentary',
-            'created_at'
+            'created_at',
+            'selectedInterval'
         ]);
         $result = [
             'status' => 204,

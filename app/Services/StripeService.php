@@ -84,7 +84,7 @@ class StripeService
             ]],
             'customer_email' => $data['email'],
             'mode' => $data['price']['type'] == 'one_time' ? 'payment' : 'subscription',
-            'success_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&success=true',
+            'success_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&success=true&paymentMethod=stripe',
             'cancel_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&canceled=true',
         ]);
 
