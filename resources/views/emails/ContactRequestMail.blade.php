@@ -8,6 +8,8 @@
 
 <p>Message envoyé par : {{ $details['gender'] }} {{ $details['fullName'] }}</p>
 
+<p>Email : {{$details['email']}}</p>
+
 <p>Sujet : {{$details['subject']}}</p>
 <div style="display:flex; justify-content:start;align-items: start">
     <p style="flex:none">Message : </p>

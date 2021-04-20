@@ -4,14 +4,14 @@ namespace App\Services;
 
 use Stripe\StripeClient;
 use Config;
-\Stripe\Stripe::setApiKey('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+\Stripe\Stripe::setApiKey(config('stripe-keys.stripe_secret'));
 
 class StripeService
 {
     protected $stripe;
-    public $DOMAIN_URL = 'http://localhost:3000';
-    public $MAIN_DONATIONS_PRODUCT_ID = 'prod_J93CK4sl4pYpFe';
-    public $CUSTOM_DONATIONS_PRODUCT_ID = 'prod_JExXJvpqQEau0Q';
+    public $FRONT_URL;
+    public $STRIPE_MAIN_DONATIONS_PRODUCT_ID;
+    public $STRIPE_CUSTOM_DONATIONS_PRODUCT_ID;
 
 // TODO CREATE METHOD TO GET A SINGLE PRICE, IF NOT PRESENT, CREATE A METHOD TO CREATE PRICE ON STRIPE
     public function __construct()
@@ -19,6 +19,10 @@ class StripeService
         $stripe_secret = config('stripe-keys.stripe_secret');
 
         $this->stripe = new StripeClient($stripe_secret);
+        $this->FRONT_URL = config('app-env.front_url');
+        $this->STRIPE_MAIN_DONATIONS_PRODUCT_ID = config('stripe-keys.stripe_custom_donations_product_id');
+        $this->STRIPE_CUSTOM_DONATIONS_PRODUCT_ID = config('stripe-keys.stripe_custom_donations_product_id');
+
     }
 
     public function getInstance(){
@@ -26,7 +30,7 @@ class StripeService
     }
 
     public function getMainsPrices(){
-        return $this->stripe->prices->all(['product' => $this->MAIN_DONATIONS_PRODUCT_ID]);
+        return $this->stripe->prices->all(['product' => $this->STRIPE_MAIN_DONATIONS_PRODUCT_ID]);
     }
 
     public function getAllPrices(){
@@ -62,14 +66,14 @@ class StripeService
             $createdPrice = $this->stripe->prices->create([
                 'unit_amount' => $amount,
                 'currency' => 'chf',
-                'product' => $this->CUSTOM_DONATIONS_PRODUCT_ID,
+                'product' => $this->STRIPE_CUSTOM_DONATIONS_PRODUCT_ID,
             ]);
         } else {
             $createdPrice = $this->stripe->prices->create([
                 'unit_amount' => $amount,
                 'currency' => 'chf',
                 'recurring' => ['interval' => $interval],
-                'product' => $this->CUSTOM_DONATIONS_PRODUCT_ID,
+                'product' => $this->STRIPE_CUSTOM_DONATIONS_PRODUCT_ID,
             ]);
         }
         return $createdPrice;
@@ -84,8 +88,8 @@ class StripeService
             ]],
             'customer_email' => $data['email'],
             'mode' => $data['price']['type'] == 'one_time' ? 'payment' : 'subscription',
-            'success_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&success=true&paymentMethod=stripe',
-            'cancel_url' => $this->DOMAIN_URL . '/soutenir-envol?session='.$data['client_session'].'&canceled=true',
+            'success_url' => $this->FRONT_URL . '/soutenir-envol?session='.$data['client_session'].'&success=true&paymentMethod=stripe',
+            'cancel_url' => $this->FRONT_URL . '/soutenir-envol?session='.$data['client_session'].'&canceled=true',
         ]);
 
         return $checkout_session->id;
