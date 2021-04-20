@@ -30,7 +30,6 @@ Route::post('/products/prices/findOrCreate', [ProductController::class,'findOrCr
 
 Route::get('/products', [ProductController::class,'index']);
 
-
 Route::post('/donate/thankYou', [ProductController::class,'thankYou']);
 
 Route::post('/donate/session', [ProductController::class,'session']);
