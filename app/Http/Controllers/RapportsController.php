@@ -29,6 +29,13 @@ class RapportsController extends Controller
 
     public function upload(Request $request)
     {
+
+        $access_token = $request->accessToken;
+        $env_rapports_key = config('rapports-key.token');
+
+        if(!$access_token || $access_token != $env_rapports_key){
+            return response()->json('Unauthorized',401);
+        }
 //        request()->validate([
 //            'file' => 'required',
 //            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
