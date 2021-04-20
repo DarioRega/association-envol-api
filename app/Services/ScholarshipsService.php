@@ -32,7 +32,7 @@ class ScholarshipsService
             $scholarshipModel = $this->scholarshipsRepository->save($data);
         } catch (Exception $e) {
             DB::rollBack();
-//            Log::error($e->getMessage());
+            Log::error($e->getMessage());
             throw new InvalidArgumentException('Unable to delete post data');
         }
 
@@ -57,7 +57,7 @@ class ScholarshipsService
             try {
                 array_push($createdFiles, $this->scholarshipsRepository->createFile($fileData));
             } catch (Exception $e) {
-//                Log::error($e->getMessage());
+                Log::error('Unable to upload files: '.$e->getMessage());
             }
         }
         return $createdFiles;
@@ -73,14 +73,14 @@ class ScholarshipsService
             $result['data']['zipPath'] = $zipResult['zipPath'];
             $result['data']['zipName'] = $zipResult['zipName'];
         } else {
-//            Log::warning('Zip file generation is not working');
+            Log::warning('Zip file generation is not working');
         }
 
         try {
             Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
             $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
         } catch (\Swift_TransportException $e) {
-//            Log::warning($e->getMessage());
+            Log::error('Error while sending email to Envol Association confirm Demande bourse', ['error' => $e->getMessage()]);
             $result = [
                 'status' => 400,
                 'message' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre demande de bourse a été téléchargée.<br> Veuillez contacter notre secretariat en leur indiquant que votre demande de bourse est en statut <b>202</b>."
@@ -90,7 +90,7 @@ class ScholarshipsService
         try {
             self::notifyUserSuccessScholarshipRequest($result['data']);
         } catch (\Swift_TransportException $e) {
-//            Log::warning($e->getMessage());
+            Log::error('Error while sending email to Demandeur to confirm his Demande bourse', ['error' => $e->getMessage()]);
             $result = [
                 'status' => 417,
                 'message' => "Une erreur est survenue durant l'envoi du mail de confirmation pour votre boîte mail. Cependant votre demande de bourse a été prise en compte. nous vous recontacterons prochainement."
