@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Type;
+use http\Client\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class RapportsController extends Controller
@@ -25,6 +27,22 @@ class RapportsController extends Controller
 
         return response()->json($documentsOrderedByTypes);
 
+    }
+    public function download($id){
+        $rapport = Document::find($id);
+        $pbl_path = public_path();
+        $file_path = $pbl_path.$rapport->srcUrl;
+        $type = File::mimeType($file_path);
+        $headers = array(
+            'Content-Type' => $type,
+//            'Content-Disposition' => 'attachment; filename='.$rapport->name,
+        );
+        if ( file_exists($file_path ) ) {
+//            return Storage::disk('public')->download($rapport->srcUrl, $rapport->name, $headers);
+            return response()->download($file_path, $rapport->name,$headers);
+        } else {
+            return response()->json('NO EXIST'. $file_path);
+        }
     }
 
     public function upload(Request $request)
