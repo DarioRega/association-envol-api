@@ -32,14 +32,15 @@ class RapportsController extends Controller
         $rapport = Document::find($id);
         $pbl_path = public_path();
         $file_path = $pbl_path.$rapport->srcUrl;
+        $ext = pathinfo($file_path)['extension'];
+
         $type = File::mimeType($file_path);
         $headers = array(
             'Content-Type' => $type,
-//            'Content-Disposition' => 'attachment; filename='.$rapport->name,
         );
+
         if ( file_exists($file_path ) ) {
-//            return Storage::disk('public')->download($rapport->srcUrl, $rapport->name, $headers);
-            return response()->download($file_path, $rapport->name,$headers);
+            return response()->download($file_path, $rapport->name.'.'.$ext,$headers);
         } else {
             return response()->json('NO EXIST'. $file_path);
         }
