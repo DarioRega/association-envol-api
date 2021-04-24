@@ -6,6 +6,7 @@ use App\Mail\DonationNotificationToEnvol;
 use App\Mail\ScholarshipRequestMail;
 use App\Models\Interval;
 use App\Models\MainAmount;
+use App\Models\PaypalPlan;
 use App\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -98,5 +99,12 @@ class ProductController extends Controller
             ];
         }
         return response()->json($result);
+    }
+    //TODO CHECK
+    public function paypal_plans($name){
+        return PaypalPlan::where('name', $name)->first();
+    }
+    public function create_paypal_plans($name){
+        // TODO
     }
 }

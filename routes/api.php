@@ -42,5 +42,5 @@ Route::post('contact', [ContactController::class, 'contact']);
 
 Route::post('scholarship', [ScholarshipController::class, 'create']);
 
-
+Route::post('paypal/plans/{name}', [ProductController::class,'paypal_plans']);
 
