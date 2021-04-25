@@ -38,5 +38,9 @@ class PaypalPlansSeeder extends Seeder
             'plan_id' => 'P-7N809603FM8652331MB7PGWI',
             'name' => 'main-100-year',
         ]);
+        DB::table('paypal_plans')->insert([
+            'plan_id' => 'P-9N345124SA099804FMCC2XMI',
+            'name' => 'custom-32-month',
+        ]);
     }
 }

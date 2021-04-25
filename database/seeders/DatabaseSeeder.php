@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             TypeSeeder::class,
             IntervalSeeder::class,
             MainAmountSeeder::class,
+            PaypalPlansSeeder::class,
         ]);
     }
 }

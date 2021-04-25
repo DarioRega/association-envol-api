@@ -9,6 +9,7 @@ use App\Models\MainAmount;
 use App\Models\PaypalPlan;
 use App\Services\StripeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class ProductController extends Controller
@@ -92,7 +93,7 @@ class ProductController extends Controller
         try {
             Mail::to('dario.regazzoni@outlook.fr')->send(new DonationNotificationToEnvol($data));
         } catch (\Swift_TransportException $e) {
-//            Log::warning($e->getMessage());
+            Log::warning($e->getMessage());
             $result = [
                 'status' => 400,
                 'message' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre donation à été prise en compte."
@@ -100,11 +101,21 @@ class ProductController extends Controller
         }
         return response()->json($result);
     }
-    //TODO CHECK
+
     public function paypal_plans($name){
         return PaypalPlan::where('name', $name)->first();
     }
-    public function create_paypal_plans($name){
-        // TODO
+
+    public function create_paypal_plan(Request $request){
+        request()->validate([
+            'plan_id' => ['required'],
+            'name' => ['required'],
+        ]);
+       $plan = PaypalPlan::create([
+            'plan_id' => $request->plan_id,
+            'name' => $request->name,
+        ]);
+
+       return response()->json($plan);
     }
 }
