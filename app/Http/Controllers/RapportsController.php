@@ -28,6 +28,12 @@ class RapportsController extends Controller
         return response()->json($documentsOrderedByTypes);
 
     }
+
+    public function types()
+    {
+        return response()->json(Type::all());
+    }
+
     public function download($id){
         $rapport = Document::find($id);
         $pbl_path = public_path();
@@ -82,5 +88,12 @@ class RapportsController extends Controller
         $document->save();
 
         return response()->json(Document::find($document->id));
+    }
+
+    public function delete($id){
+        $rapport = Document::find($id);
+        $pbl_path = public_path();
+        $file_path = $pbl_path.$rapport->srcUrl;
+        $ext = pathinfo($file_path)['extension'];
     }
 }

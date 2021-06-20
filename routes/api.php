@@ -30,6 +30,7 @@ Route::group(['prefix' => 'donate'], function () {
 
 Route::group(['prefix' => 'rapports'], function () {
     Route::get('/', [RapportsController::class, 'show']);
+    Route::get('/types', [RapportsController::class, 'types']);
     Route::post('/', [RapportsController::class, 'upload']);
 });
 
