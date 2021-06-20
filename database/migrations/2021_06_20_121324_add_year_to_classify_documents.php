@@ -14,10 +14,8 @@ class AddYearToClassifyDocuments extends Migration
     public function up()
     {
         Schema::table('documents', function (Blueprint $table) {
-            $table->integer('year_to_classify')
-                ->after('type_id');
+            $table->integer('year_to_classify');
             $table->boolean('is_archived')
-                ->after('year_to_classify')
                 ->default(false);
         });
     }
@@ -29,7 +27,7 @@ class AddYearToClassifyDocuments extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('documents', function (Blueprint $table) {
             $table->dropColumn('year_to_classify', 'is_archived');
         });
 

@@ -72,11 +72,11 @@ class RapportsController extends Controller
         $document->name = $name;
 
         if($request->hasFile('file')) {
-            $typeId = $request->typeId;
+            $type_id = $request->type_id;
             $file = $request->file('file');
-            $document->type_id = $typeId;
+            $document->type_id = $type_id;
 
-            $typeDirectory = Type::find($typeId);
+            $typeDirectory = Type::find($type_id);
             $path = Storage::disk('public')->put('documents/' . $typeDirectory->name, $file);
             $full_path = '/storage/' . $path;
 
