@@ -1,12 +1,9 @@
 <?php
 
-use App\Http\Controllers;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RapportsController;
 use App\Http\Controllers\ScholarshipController;
-use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,29 +17,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
+Route::group(['prefix' => 'products'], function () {
+    Route::get('/', [ProductController::class,'index']);
+    Route::get('/metadata', [ProductController::class,'metadata']);
+    Route::post('/prices/findOrCreate', [ProductController::class,'findOrCreate']);
+});
 
-Route::get('/products/metadata', [ProductController::class,'metadata']);
+Route::group(['prefix' => 'donate'], function () {
+    Route::post('/thankYou', [ProductController::class,'thankYou']);
+    Route::post('/session', [ProductController::class,'session']);
+});
 
-Route::post('/products/prices/findOrCreate', [ProductController::class,'findOrCreate']);
+Route::group(['prefix' => 'rapports'], function () {
+    Route::get('/', [RapportsController::class, 'show']);
+    Route::post('/', [RapportsController::class, 'upload']);
+});
 
-Route::get('/products', [ProductController::class,'index']);
+Route::group(['prefix' => 'paypal/plans'], function () {
+    Route::post('/', [ProductController::class,'create_paypal_plan']);
+    Route::get('/{name}', [ProductController::class,'paypal_plans']);
 
-Route::post('/donate/thankYou', [ProductController::class,'thankYou']);
-
-Route::post('/donate/session', [ProductController::class,'session']);
-
-Route::get('rapports', [RapportsController::class, 'show']);
-
-Route::post('rapports', [RapportsController::class, 'upload']);
+});
 
 Route::post('contact', [ContactController::class, 'contact']);
-
 Route::post('scholarship', [ScholarshipController::class, 'create']);
-
-Route::get('paypal/plans/{name}', [ProductController::class,'paypal_plans']);
-
-Route::post('paypal/plans', [ProductController::class,'create_paypal_plan']);
 
