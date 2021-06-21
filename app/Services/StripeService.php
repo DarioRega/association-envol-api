@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Stripe\StripeClient;
 use Config;
-\Stripe\Stripe::setApiKey(config('stripe-keys.stripe_secret'));
+\Stripe\Stripe::setApiKey(config('env_variables.stripe_secret'));
 
 class StripeService
 {
@@ -16,12 +16,12 @@ class StripeService
 // TODO CREATE METHOD TO GET A SINGLE PRICE, IF NOT PRESENT, CREATE A METHOD TO CREATE PRICE ON STRIPE
     public function __construct()
     {
-        $stripe_secret = config('stripe-keys.stripe_secret');
+        $stripe_secret = config('env_variables.stripe_secret');
 
         $this->stripe = new StripeClient($stripe_secret);
         $this->FRONT_URL = config('app-env.front_url');
-        $this->STRIPE_MAIN_DONATIONS_PRODUCT_ID = config('stripe-keys.stripe_custom_donations_product_id');
-        $this->STRIPE_CUSTOM_DONATIONS_PRODUCT_ID = config('stripe-keys.stripe_custom_donations_product_id');
+        $this->STRIPE_MAIN_DONATIONS_PRODUCT_ID = config('env_variables.stripe_custom_donations_product_id');
+        $this->STRIPE_CUSTOM_DONATIONS_PRODUCT_ID = config('env_variables.stripe_custom_donations_product_id');
 
     }
 
