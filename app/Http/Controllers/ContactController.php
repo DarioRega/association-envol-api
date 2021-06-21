@@ -32,9 +32,10 @@ class ContactController extends Controller
 
         $contactRequest->save();
         $contact = Contact::find($contactRequest->id);
+        $genderArray = config('enums.gender');
 
         try {
-            Mail::to('dario.regazzoni@outlook.fr')->send(new ContactRequestMail($contact));
+            Mail::to(config(config('env_variables.contact_mail_to')))->send(new ContactRequestMail($contact));
         } catch(Swift_TransportException $transportExp) {
            return response(['message' => "<p>Une erreur est survenue lors de l'envoi, nous en sommes désolés.</p><p>Si le problème presiste veuillez nous contacter directement via notre email.</p>"], 400);
         }
