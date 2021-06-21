@@ -45,8 +45,7 @@ class RapportsController extends Controller
         );
 
         if ( file_exists($file_path ) ) {
-            return response()->json('EXIST => '.$file_path);
-//            return response()->download($file_path, $rapport->name.'.'.$ext,$headers);
+            return response()->download($file_path, $rapport->name.'.'.$ext,$headers);
         } else {
             return response()->json('NO EXIST'. $file_path);
         }
