@@ -18,7 +18,7 @@ class TypeSeeder extends Seeder
             'name' => 'Rapports',
         ]);
         DB::table('types')->insert([
-            'name' => 'Boursiers',
+            'name' => 'Nationalités',
         ]);
         DB::table('types')->insert([
             'name' => 'Comptes',
