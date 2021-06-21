@@ -29,10 +29,10 @@ Route::group(['prefix' => 'donate'], function () {
 });
 
 Route::group(['prefix' => 'rapports'], function () {
-    Route::get('/{id}', [RapportsController::class, 'single']);
-    Route::get('/download/{id}', [RapportsController::class, 'download']);
-    Route::get('/', [RapportsController::class, 'show']);
     Route::get('/types', [RapportsController::class, 'types']);
+    Route::get('/download/{id}', [RapportsController::class, 'download']);
+    Route::get('/{id}', [RapportsController::class, 'single']);
+    Route::get('/', [RapportsController::class, 'show']);
 
     Route::post('/', [RapportsController::class, 'upload']);
 
