@@ -36,7 +36,7 @@ class ContactController extends Controller
         $genderArray = config('enums.gender');
 
         try {
-            Mail::to(config(config('env_variables.contact_mail_to')))->send(new ContactRequestMail($contact));
+            Mail::to(config('env_variables.contact_mail_to'))->send(new ContactRequestMail($contact));
         } catch(Swift_TransportException $transportExp) {
            return response(['message' => "<p>Une erreur est survenue lors de l'envoi, nous en sommes désolés.</p><p>Si le problème presiste veuillez nous contacter directement via notre email.</p>"], 400);
         }
