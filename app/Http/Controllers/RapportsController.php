@@ -18,25 +18,14 @@ class RapportsController extends Controller
         $this->documentService = $documentService;
     }
 
-    public function show()
+    public function show(Request $request)
     {
-        $documentsOrderedByTypes = [];
-        $commonType = Type::whereName('Commons')->firstOrFail();
-        $allDocuments = Document::with('type')->where('type_id', '!=', $commonType->id)->get();
-
-        $sortedDesc = collect($allDocuments)->sortByDesc('year_to_classify');
-
-        foreach ($sortedDesc as $document){
-            $typeName = $document['type']['name'];
-            if(!isset($documentsOrderedByTypes[$typeName])){
-                $documentsOrderedByTypes[$typeName] = [];
-            }
-
-            array_push($documentsOrderedByTypes[$typeName], $document);
+        if($request->has('onlyWebsiteRelated')){
+            $documents = $this->documentService->getOnlyWebsiteRapportPage();
+        } else {
+            $documents = $this->documentService->getAll();
         }
-
-
-        return response()->json($documentsOrderedByTypes);
+        return response()->json($documents);
 
     }
 

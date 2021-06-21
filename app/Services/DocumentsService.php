@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Mail\ScholarshipConfirmationMail;
 use App\Mail\ScholarshipRequestMail;
 use App\Models\Document;
+use App\Models\Type;
 use App\Repositories\DocumentsRepository;
 use App\Repositories\ScholarshipsRepository;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,36 @@ class DocumentsService
         $this->documentsRepository= $documentsRepository;
     }
 
+    public function getOnlyWebsiteRapportPage(){
+        $documentsOrderedByTypes = [];
+        $relatedIds = $this->getWebsitesRelatedTypesId();
+        $relatedDocuments = $this->documentsRepository->getAllWebsiteRelated($relatedIds);
+
+        $sortedDesc = collect($relatedDocuments)->sortByDesc('year_to_classify');
+
+        foreach ($sortedDesc as $document){
+            $typeName = $document['type']['name'];
+            if(!isset($documentsOrderedByTypes[$typeName])){
+                $documentsOrderedByTypes[$typeName] = [];
+            }
+
+            array_push($documentsOrderedByTypes[$typeName], $document);
+        }
+        return $documentsOrderedByTypes;
+    }
+
+    public function getAll(){
+        return $this->documentsRepository->getAll();
+    }
+
+    public function getWebsitesRelatedTypesId(){
+        return [
+        'rapport_id' => $this->documentsRepository->getSingleTypeByName('Rapports')['id'],
+        'nationality_id' => $this->documentsRepository->getSingleTypeByName('Nationalités')['id'],
+        'account_id' => $this->documentsRepository->getSingleTypeByName('Comptes')['id'],
+        'formation_id' => $this->documentsRepository->getSingleTypeByName('Formations')['id'],
+        ];
+    }
     public function download($id)
     {
         $rapport  = $this->documentsRepository->getSingleById($id);

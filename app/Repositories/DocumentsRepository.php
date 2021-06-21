@@ -15,6 +15,19 @@ class DocumentsRepository
         return Document::findOrFail($id);
     }
 
+    public function getAll(){
+        return Document::all();
+    }
+
+    public function getAllWebsiteRelated($data){
+        return Document::with('type')
+            ->where('type_id', '=', $data['rapport_id'])
+            ->orWhere('type_id', '=', $data['nationality_id'])
+            ->orWhere('type_id', '=', $data['account_id'])
+            ->orWhere('type_id', '=', $data['formation_id'])
+            ->get();
+    }
+
     public function create($data)
     {
         $document = new Document();
