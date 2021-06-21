@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Type;
-use http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -67,6 +66,7 @@ class RapportsController extends Controller
 //        ]);
 
         $name = $request->name;
+        $year_to_classify = $request->year_to_classify;
 
         $document = new Document();
         $document->name = $name;
@@ -76,7 +76,7 @@ class RapportsController extends Controller
             $file = $request->file('file');
             $document->type_id = $type_id;
 
-            $typeDirectory = Type::find($type_id);
+            $typeDirectory = Type::findOrFail($type_id);
             $path = Storage::disk('public')->put('documents/' . $typeDirectory->name, $file);
             $full_path = '/storage/' . $path;
 
@@ -87,13 +87,12 @@ class RapportsController extends Controller
         }
         $document->save();
 
-        return response()->json(Document::find($document->id));
+        return response()->json(Document::findOrFail($document->id));
     }
 
     public function delete($id){
         $rapport = Document::find($id);
-        $pbl_path = public_path();
-        $file_path = $pbl_path.$rapport->srcUrl;
-        $ext = pathinfo($file_path)['extension'];
+
+        Storage::disk('public')->delete($rapport->srcUrl);
     }
 }
