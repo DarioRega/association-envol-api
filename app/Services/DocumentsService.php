@@ -49,4 +49,18 @@ class DocumentsService
             throw new NotFoundHttpException('Document not found');
         }
     }
+
+    function upload($data){
+
+        if($data['is_external']){
+            $data['type'] = $this->documentsRepository->getSingleTypeByName('Externals');
+        } else {
+            $data['type'] = $this->documentsRepository->getSingleTypeById($data['type_id']);
+            $path = Storage::disk('public')->put('documents/' . $data['type']['name'], $data['file']);
+            $full_path = '/storage/' . $path;
+            $data['srcUrl'] = $full_path;
+        }
+
+        return $this->documentsRepository->create($data);
+        }
 }

@@ -68,37 +68,26 @@ class RapportsController extends Controller
         if(!$access_token || $access_token != $env_rapports_key){
             return response()->json('Unauthorized',401);
         }
+
         request()->validate([
             'name' => 'required', 'string',
             'type_id' => 'nullable', 'string',
             'year_to_classify' => 'required', 'integer',
-//            'file' => 'required',
-//            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
+            'is_external' => 'nullable',
         ]);
 
-        $name = $request->name;
-        $year_to_classify = $request->year_to_classify;
+        $data = request()->only([
+            'name',
+            'type_id',
+            'year_to_classify',
+            'file',
+            'srcUrl',
+        ]);
+        $data['is_external'] = $request->input('is_external', false);
 
-        $document = new Document();
-        $document->name = $name;
+        $document = $this->documentService->upload($data);
 
-        if($request->hasFile('file')) {
-            $file = $request->file('file');
-            $document->year_to_classify = $year_to_classify;
-            $type_id = $request->type_id;
-            $document->type_id = $type_id;
-            $typeDirectory = Type::findOrFail($type_id);
-            $path = Storage::disk('public')->put('documents/' . $typeDirectory->name, $file);
-
-            $full_path = '/storage/' . $path;
-            $document->srcUrl = $full_path;
-        } else {
-            $document->is_external = true;
-            $document->srcUrl = $request->srcUrl;
-        }
-
-        $document->save();
-        return response()->json(Document::findOrFail($document->id));
+        return response()->json($document);
     }
 
 
