@@ -78,7 +78,7 @@ class ScholarshipsService
         }
 
         try {
-            Mail::to('dario.regazzoni@outlook.fr')->send(new ScholarshipRequestMail($result['data']));
+            Mail::to(config('env_variables.scholarship_mail_to'))->send(new ScholarshipRequestMail($result['data']));
             $result['message'] = "Demande de bourse envoyée avec succès, nous vous recontacterons prochainement.";
         } catch (\Swift_TransportException $e) {
             Log::error('Error while sending email to Envol Association confirm Demande bourse', ['error' => $e->getMessage()]);

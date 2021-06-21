@@ -31,5 +31,9 @@ class TypeSeeder extends Seeder
             'name' => 'Commons',
         ]);
 
+        DB::table('types')->insert([
+            'name' => 'Externals',
+        ]);
+
     }
 }

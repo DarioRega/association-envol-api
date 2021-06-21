@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\DonationNotificationToEnvol;
-use App\Mail\ScholarshipRequestMail;
 use App\Models\Interval;
 use App\Models\MainAmount;
 use App\Models\PaypalPlan;
