@@ -29,9 +29,14 @@ Route::group(['prefix' => 'donate'], function () {
 });
 
 Route::group(['prefix' => 'rapports'], function () {
+    Route::get('/{id}', [RapportsController::class, 'single']);
     Route::get('/', [RapportsController::class, 'show']);
+    Route::get('/download/{id}', [RapportsController::class, 'download']);
     Route::get('/types', [RapportsController::class, 'types']);
+
     Route::post('/', [RapportsController::class, 'upload']);
+
+    Route::delete('/{id}', [RapportsController::class, 'delete']);
 });
 
 Route::group(['prefix' => 'paypal/plans'], function () {
