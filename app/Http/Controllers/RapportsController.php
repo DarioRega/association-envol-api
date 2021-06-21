@@ -90,9 +90,11 @@ class RapportsController extends Controller
         return response()->json(Document::findOrFail($document->id));
     }
 
+
     public function delete($id){
-        $rapport = Document::find($id);
+        $rapport = Document::findOrFail($id);
 
         Storage::disk('public')->delete($rapport->srcUrl);
+        $rapport->delete();
     }
 }
