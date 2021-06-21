@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Document;
-use App\Models\Type;
 use App\Services\DocumentsService;
 use Illuminate\Http\Request;
 
@@ -51,7 +49,7 @@ class RapportsController extends Controller
     public function upload(Request $request)
     {
         $access_token = $request->accessToken;
-        $env_rapports_key = config('rapports-key.token');
+        $env_rapports_key = config('env_variables.rapport_token');
 
         if(!$access_token || $access_token != $env_rapports_key){
             return response()->json('Unauthorized',401);
