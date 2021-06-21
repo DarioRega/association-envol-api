@@ -70,6 +70,7 @@ class RapportsController extends Controller
 
         $document = new Document();
         $document->name = $name;
+        $document->year_to_classify = $year_to_classify;
 
         if($request->hasFile('file')) {
             $type_id = $request->type_id;
@@ -77,16 +78,17 @@ class RapportsController extends Controller
             $document->type_id = $type_id;
 
             $typeDirectory = Type::findOrFail($type_id);
-            $path = Storage::disk('public')->put('documents/' . $typeDirectory->name, $file);
-            $full_path = '/storage/' . $path;
 
+            $path = Storage::disk('public')->put('documents/' . $typeDirectory->name, $file);
+
+            $full_path = '/storage/' . $path;
             $document->srcUrl = $full_path;
         } else {
             $document->is_external = true;
             $document->srcUrl = $request->srcUrl;
         }
-        $document->save();
 
+        $document->save();
         return response()->json(Document::findOrFail($document->id));
     }
 
