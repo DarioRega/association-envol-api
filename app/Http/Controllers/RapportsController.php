@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Type;
+use App\Services\DocumentsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class RapportsController extends Controller
 {
+
+    protected $documentService;
+
+    public function __construct(DocumentsService $documentService)
+    {
+        $this->documentService = $documentService;
+    }
+
     public function show()
     {
         $documentsOrderedByTypes = [];
@@ -43,20 +51,12 @@ class RapportsController extends Controller
     }
 
     public function download($id){
-        $rapport = Document::findOrFail($id);
-        $pbl_path = public_path();
-        $file_path = $pbl_path.$rapport->srcUrl;
-        $ext = pathinfo($file_path)['extension'];
 
-        $type = File::mimeType($file_path);
-        $headers = array(
-            'Content-Type' => $type,
-        );
-
-        if ( file_exists($file_path ) ) {
-            return response()->download($file_path, $rapport->name.'.'.$ext,$headers);
-        } else {
-            return response()->json('NO EXIST'. $file_path);
+        try {
+        $data =  $this->documentService->download($id);
+            return response()->download($data['file_path'], $data['file_name'],$data['headers']);
+        } catch (Exception $e){
+            return response(['message' => "Document not found", 'err' => $e->getMessage()], 404);
         }
     }
 

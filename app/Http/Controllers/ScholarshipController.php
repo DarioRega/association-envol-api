@@ -15,7 +15,7 @@ use PHPUnit\Exception;
 class ScholarshipController extends Controller
 {
     protected $scholarshipsService;
-//
+
     public function __construct(ScholarshipsService $scholarshipsService)
     {
         $this->scholarshipsService = $scholarshipsService;
