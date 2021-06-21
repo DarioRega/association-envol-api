@@ -3,20 +3,10 @@
 
 namespace App\Services;
 
-
-use App\Mail\ScholarshipConfirmationMail;
-use App\Mail\ScholarshipRequestMail;
-use App\Models\Document;
-use App\Models\Type;
 use App\Repositories\DocumentsRepository;
-use App\Repositories\ScholarshipsRepository;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use ZipArchive;
 
 class DocumentsService
 {
@@ -25,6 +15,18 @@ class DocumentsService
     public function __construct(DocumentsRepository $documentsRepository)
     {
         $this->documentsRepository= $documentsRepository;
+    }
+
+    public function getSingle($id){
+        return $this->documentsRepository->getSingleById($id);
+    }
+
+    public function getAll(){
+        return $this->documentsRepository->getAll();
+    }
+
+    public function getAllTypes(){
+        return $this->documentsRepository->getAllTypes();
     }
 
     public function getOnlyWebsiteRapportPage(){
@@ -45,18 +47,8 @@ class DocumentsService
         return $documentsOrderedByTypes;
     }
 
-    public function getAll(){
-        return $this->documentsRepository->getAll();
-    }
 
-    public function getWebsitesRelatedTypesId(){
-        return [
-        'rapport_id' => $this->documentsRepository->getSingleTypeByName('Rapports')['id'],
-        'nationality_id' => $this->documentsRepository->getSingleTypeByName('Nationalités')['id'],
-        'account_id' => $this->documentsRepository->getSingleTypeByName('Comptes')['id'],
-        'formation_id' => $this->documentsRepository->getSingleTypeByName('Formations')['id'],
-        ];
-    }
+
     public function download($id)
     {
         $rapport  = $this->documentsRepository->getSingleById($id);
@@ -93,5 +85,21 @@ class DocumentsService
         }
 
         return $this->documentsRepository->create($data);
-        }
+    }
+
+    public function delete($id){
+        $rapport = $this->documentsRepository->getSingleById($id);
+        Storage::disk('public')->delete($rapport->srcUrl);
+
+        $this->documentsRepository->delete($rapport);
+    }
+
+    private function getWebsitesRelatedTypesId(){
+        return [
+            'rapport_id' => $this->documentsRepository->getSingleTypeByName('Rapports')['id'],
+            'nationality_id' => $this->documentsRepository->getSingleTypeByName('Nationalités')['id'],
+            'account_id' => $this->documentsRepository->getSingleTypeByName('Comptes')['id'],
+            'formation_id' => $this->documentsRepository->getSingleTypeByName('Formations')['id'],
+        ];
+    }
 }

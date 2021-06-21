@@ -3,7 +3,6 @@
 
 namespace App\Repositories;
 
-
 use App\Models\Document;
 use App\Models\Type;
 
@@ -42,6 +41,10 @@ class DocumentsRepository
         return $document::find($document->id);
     }
 
+    public function delete($rapport){
+        $rapport->delete();
+    }
+
     /*
      Types
      */
@@ -53,5 +56,10 @@ class DocumentsRepository
     public function getSingleTypeByName($name)
     {
         return Type::whereName($name)->firstOrFail();
+    }
+
+    public function getAllTypes()
+    {
+        return Type::all();
     }
 }

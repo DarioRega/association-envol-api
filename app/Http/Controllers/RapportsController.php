@@ -6,7 +6,6 @@ use App\Models\Document;
 use App\Models\Type;
 use App\Services\DocumentsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class RapportsController extends Controller
 {
@@ -31,12 +30,12 @@ class RapportsController extends Controller
 
     public function single($id)
     {
-        return Document::findOrFail($id);
+        return response()->json($this->documentService->getSingle($id));
     }
 
     public function types()
     {
-        return response()->json(Type::all());
+        return response()->json($this->documentService->getAllTypes());
     }
 
     public function download($id){
@@ -81,9 +80,6 @@ class RapportsController extends Controller
 
 
     public function delete($id){
-        $rapport = Document::findOrFail($id);
-
-        Storage::disk('public')->delete($rapport->srcUrl);
-        $rapport->delete();
+        $this->documentService->delete($id);
     }
 }
