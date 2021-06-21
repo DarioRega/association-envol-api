@@ -60,10 +60,13 @@ class RapportsController extends Controller
         if(!$access_token || $access_token != $env_rapports_key){
             return response()->json('Unauthorized',401);
         }
-//        request()->validate([
+        request()->validate([
+            'name' => 'required', 'string',
+            'type_id' => 'required', 'string',
+            'year_to_classify' => 'required', 'integer',
 //            'file' => 'required',
 //            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
-//        ]);
+        ]);
 
         $name = $request->name;
         $year_to_classify = $request->year_to_classify;
