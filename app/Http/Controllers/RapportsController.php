@@ -13,7 +13,9 @@ class RapportsController extends Controller
     public function show()
     {
         $documentsOrderedByTypes = [];
-        $allDocuments = Document::with('type')->get();
+        $commonType = Type::whereName('Commons')->firstOrFail();
+        $allDocuments = Document::with('type')->where('type_id', '!=', $commonType->id)->get();
+
         $sortedDesc = collect($allDocuments)->sortByDesc('year_to_classify');
 
         foreach ($sortedDesc as $document){
@@ -30,13 +32,18 @@ class RapportsController extends Controller
 
     }
 
+    public function single($id)
+    {
+        return Document::findOrFail($id);
+    }
+
     public function types()
     {
         return response()->json(Type::all());
     }
 
     public function download($id){
-        $rapport = Document::find($id);
+        $rapport = Document::findOrFail($id);
         $pbl_path = public_path();
         $file_path = $pbl_path.$rapport->srcUrl;
         $ext = pathinfo($file_path)['extension'];
@@ -55,7 +62,6 @@ class RapportsController extends Controller
 
     public function upload(Request $request)
     {
-
         $access_token = $request->accessToken;
         $env_rapports_key = config('rapports-key.token');
 
@@ -64,7 +70,7 @@ class RapportsController extends Controller
         }
         request()->validate([
             'name' => 'required', 'string',
-            'type_id' => 'required', 'string',
+            'type_id' => 'nullable', 'string',
             'year_to_classify' => 'required', 'integer',
 //            'file' => 'required',
 //            'file.*' => 'mimes:doc,pdf,docx,txt,xls,'
@@ -75,15 +81,13 @@ class RapportsController extends Controller
 
         $document = new Document();
         $document->name = $name;
-        $document->year_to_classify = $year_to_classify;
 
         if($request->hasFile('file')) {
-            $type_id = $request->type_id;
             $file = $request->file('file');
+            $document->year_to_classify = $year_to_classify;
+            $type_id = $request->type_id;
             $document->type_id = $type_id;
-
             $typeDirectory = Type::findOrFail($type_id);
-
             $path = Storage::disk('public')->put('documents/' . $typeDirectory->name, $file);
 
             $full_path = '/storage/' . $path;

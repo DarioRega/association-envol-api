@@ -27,5 +27,9 @@ class TypeSeeder extends Seeder
             'name' => 'Formations',
         ]);
 
+        DB::table('types')->insert([
+            'name' => 'Commons',
+        ]);
+
     }
 }
