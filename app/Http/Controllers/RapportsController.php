@@ -14,8 +14,9 @@ class RapportsController extends Controller
     {
         $documentsOrderedByTypes = [];
         $allDocuments = Document::with('type')->get();
+        $sortedDesc = collect($allDocuments)->sortByDesc('year_to_classify');
 
-        foreach ($allDocuments as $document){
+        foreach ($sortedDesc as $document){
             $typeName = $document['type']['name'];
             if(!isset($documentsOrderedByTypes[$typeName])){
                 $documentsOrderedByTypes[$typeName] = [];
@@ -23,6 +24,7 @@ class RapportsController extends Controller
 
             array_push($documentsOrderedByTypes[$typeName], $document);
         }
+
 
         return response()->json($documentsOrderedByTypes);
 
