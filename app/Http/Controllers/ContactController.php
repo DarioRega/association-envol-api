@@ -7,6 +7,7 @@ use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Swift_TransportException;
+use Config;
 
 class ContactController extends Controller
 {
