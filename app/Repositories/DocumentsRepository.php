@@ -24,6 +24,7 @@ class DocumentsRepository
             ->orWhere('type_id', '=', $data['nationality_id'])
             ->orWhere('type_id', '=', $data['account_id'])
             ->orWhere('type_id', '=', $data['formation_id'])
+            ->orWhere('type_id', '=', $data['bilan_id'])
             ->get();
     }
 

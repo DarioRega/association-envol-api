@@ -100,6 +100,7 @@ class DocumentsService
             'nationality_id' => $this->documentsRepository->getSingleTypeByName('Nationalités')['id'],
             'account_id' => $this->documentsRepository->getSingleTypeByName('Comptes')['id'],
             'formation_id' => $this->documentsRepository->getSingleTypeByName('Formations')['id'],
+            'bilan_id' => $this->documentsRepository->getSingleTypeByName('Bilans')['id'],
         ];
     }
 }

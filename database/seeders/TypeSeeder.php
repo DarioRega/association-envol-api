@@ -17,14 +17,21 @@ class TypeSeeder extends Seeder
         DB::table('types')->insert([
             'name' => 'Rapports',
         ]);
+
         DB::table('types')->insert([
             'name' => 'Nationalités',
         ]);
+
         DB::table('types')->insert([
             'name' => 'Comptes',
         ]);
+
         DB::table('types')->insert([
             'name' => 'Formations',
+        ]);
+
+        DB::table('types')->insert([
+            'name' => 'Bilans',
         ]);
 
         DB::table('types')->insert([
