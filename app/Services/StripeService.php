@@ -19,8 +19,8 @@ class StripeService
         $stripe_secret = config('env_variables.stripe_secret');
 
         $this->stripe = new StripeClient($stripe_secret);
-        $this->FRONT_URL = config('app-env.front_url');
-        $this->STRIPE_MAIN_DONATIONS_PRODUCT_ID = config('env_variables.stripe_custom_donations_product_id');
+        $this->FRONT_URL = config('env_variables.front_url');
+        $this->STRIPE_MAIN_DONATIONS_PRODUCT_ID = config('env_variables.stripe_main_donations_product_id');
         $this->STRIPE_CUSTOM_DONATIONS_PRODUCT_ID = config('env_variables.stripe_custom_donations_product_id');
 
     }
