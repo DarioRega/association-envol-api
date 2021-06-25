@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://association-envol.info', 'https://dev.association-envol.info'],
+    'allowed_origins' => ['https://association-envol.info', 'https://dev.association-envol.info', 'https://staging.association-envol.info', 'http://localhost:3000'],
 
     'allowed_origins_patterns' => [],
 
