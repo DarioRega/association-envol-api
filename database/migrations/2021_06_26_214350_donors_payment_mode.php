@@ -15,7 +15,7 @@ class DonorsPaymentMode extends Migration
     {
         Schema::table('donors', function (Blueprint $table) {
             $table->string('mode');
-            $table->string('subscription_status')->default('active');
+            $table->string('subscription_status')->default('active')->change();
         });
     }
 
