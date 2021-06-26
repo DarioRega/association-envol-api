@@ -25,7 +25,7 @@ class DonationsRepository
 
     public function create($data)
     {
-        Log::info($data);
+        Log::info(print_r($data, true));
         $donor = Donor::create([
             'customer_id' => $data['customer_id'],
             'email' => $data['email'],

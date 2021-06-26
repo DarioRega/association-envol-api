@@ -105,7 +105,7 @@ class DonationsService
     public function saveNewDonor($data){
         $this->donationsRepository->create([
             'customer_id' => $data['customer'],
-            'email' => $data['customer_details']['email'],
+            'email' => $data['customer_email'],
             'mode' => $data['mode'],
             'subscription_status' => 'active',
         ]);
