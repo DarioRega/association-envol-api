@@ -33,7 +33,7 @@ class DonationController extends Controller
      return response()->json(['id' => $sessionId]);
     }
 
-    public function webhook(Request $request){
+    public function stripeHooks(Request $request){
         $event = $request->getContent();
         // Parse the message body and check the signature
         $webhookSecret = config('env_variables.stripe_webhook_secret');
