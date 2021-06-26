@@ -6,7 +6,7 @@ use App\Mail\DonationNotificationToEnvol;
 use App\Models\Interval;
 use App\Models\MainAmount;
 use App\Models\PaypalPlan;
-use App\Services\StripeService;
+use App\Services\DonationsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -14,15 +14,16 @@ use Illuminate\Support\Facades\Mail;
 class ProductController extends Controller
 {
 
-    protected $stripeService;
+    protected $donationService;
 
-    public function __construct(StripeService $stripeService)
+    public function __construct(DonationsService $donationService)
     {
-        $this->stripeService = $stripeService;
+        $this->donationsService = $donationService;
     }
 
     public function index(){
-        $allPrices = $this->stripeService->getAllPrices();
+        $allPrices = $this->donationsService->getAllPrices();
+        // TODO CHECK WHY
         return response()->json($allPrices);
 
         $one_time = [];
@@ -59,46 +60,8 @@ class ProductController extends Controller
         $selected_amount = $request->input('selected_amount');
         $selected_interval = $request->input('selected_interval');
 
-        $price = $this->stripeService->findOrCreatePrice($selected_amount, $selected_interval);
+        $price = $this->donationsService->findOrCreatePrice($selected_amount, $selected_interval);
         return response()->json($price);
-    }
-
-    public function session(Request $request){
-        $data = $request->only([
-            'price',
-            'client_session',
-            'email',
-        ]);
-        $sessionId =  $this->stripeService->createSession($data) ;
-     return response()->json(['id' => $sessionId]);
-    }
-
-    public function thankYou(Request $request){
-        $data = $request->only([
-            'amount',
-            'interval',
-            'payment_method',
-            'full_name',
-            'company_name',
-            'email',
-            'commentary',
-            'created_at',
-            'selectedInterval'
-        ]);
-        $result = [
-            'status' => 204,
-        ];
-
-        try {
-            Mail::to('dario.regazzoni@outlook.fr')->send(new DonationNotificationToEnvol($data));
-        } catch (\Swift_TransportException $e) {
-            Log::warning($e->getMessage());
-            $result = [
-                'status' => 400,
-                'message' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre donation à été prise en compte."
-            ];
-        }
-        return response()->json($result);
     }
 
     public function paypal_plans($name){

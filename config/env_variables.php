@@ -6,6 +6,7 @@ return [
     'stripe_secret' =>  env('STRIPE_SECRET'),
     'stripe_main_donations_product_id' =>  env('STRIPE_MAIN_DONATIONS_PRODUCT_ID'),
     'stripe_custom_donations_product_id' =>  env('STRIPE_CUSTOM_DONATIONS_PRODUCT_ID'),
+    'stripe_webhook_secret' =>  env('STRIPE_WEBHOOK_SECRET'),
 
     'front_url' => env('FRONT_URL'),
     'current' => env('APP_ENV'),

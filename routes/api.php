@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RapportsController;
 use App\Http\Controllers\ScholarshipController;
@@ -17,15 +18,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group(['prefix' => 'donations'], function () {
+    Route::get('/donors', [DonationController::class,'index']);
+    Route::post('/stripe-hooks', [DonationController::class,'stripeHooks']);
+    Route::post('/thankYou', [DonationController::class,'thankYou']);
+    Route::post('/session', [DonationController::class,'session']);
+});
+
 Route::group(['prefix' => 'products'], function () {
     Route::get('/', [ProductController::class,'index']);
     Route::get('/metadata', [ProductController::class,'metadata']);
     Route::post('/prices/findOrCreate', [ProductController::class,'findOrCreate']);
-});
-
-Route::group(['prefix' => 'donate'], function () {
-    Route::post('/thankYou', [ProductController::class,'thankYou']);
-    Route::post('/session', [ProductController::class,'session']);
 });
 
 Route::group(['prefix' => 'rapports'], function () {

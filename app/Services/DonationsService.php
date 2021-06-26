@@ -2,20 +2,23 @@
 
 namespace App\Services;
 
+use App\Repositories\DonationsRepository;
 use Stripe\StripeClient;
 use Config;
 \Stripe\Stripe::setApiKey(config('env_variables.stripe_secret'));
 
-class StripeService
+class DonationsService
 {
     protected $stripe;
+    protected $donationsRepository;
     public $FRONT_URL;
     public $STRIPE_MAIN_DONATIONS_PRODUCT_ID;
     public $STRIPE_CUSTOM_DONATIONS_PRODUCT_ID;
 
-// TODO CREATE METHOD TO GET A SINGLE PRICE, IF NOT PRESENT, CREATE A METHOD TO CREATE PRICE ON STRIPE
-    public function __construct()
+    public function __construct(DonationsRepository $donationsRepository)
     {
+        $this->donationsRepository = $donationsRepository;
+
         $stripe_secret = config('env_variables.stripe_secret');
 
         $this->stripe = new StripeClient($stripe_secret);
@@ -79,7 +82,7 @@ class StripeService
         return $createdPrice;
     }
 
-    public function createSession($data){
+    public function createCheckoutSession($data){
         $checkout_session = $this->stripe->checkout->sessions->create([
             'payment_method_types' => ['card'],
             'line_items' => [[
@@ -94,4 +97,18 @@ class StripeService
 
         return $checkout_session->id;
     }
+
+    public function getAll(){
+        return $this->donationsRepository->getAll();
+    }
+
+    public function saveNewDonor($data){
+        $this->donationsRepository->create([
+            'customer_id' => $data['customer'],
+            'email' => $data['customer_details']['email'],
+            'subscription_status' =>'test',
+        ]);
+    }
+
+
 }
