@@ -17,6 +17,8 @@ class CreateDonorsTable extends Migration
             $table->id();
             $table->string('customer_id');
             $table->string('email');
+            $table->string('mode');
+            $table->string('subscription_status');
             $table->timestamps();
         });
     }
