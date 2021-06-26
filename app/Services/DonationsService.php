@@ -106,7 +106,8 @@ class DonationsService
         $this->donationsRepository->create([
             'customer_id' => $data['customer'],
             'email' => $data['customer_details']['email'],
-            'subscription_status' => 'test',
+            'mode' => $data['mode'],
+            'subscription_status' => 'active',
         ]);
     }
 

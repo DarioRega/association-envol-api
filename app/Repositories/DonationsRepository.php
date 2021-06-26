@@ -4,6 +4,7 @@
 namespace App\Repositories;
 
 use App\Models\Donor;
+use Illuminate\Support\Facades\Log;
 
 class DonationsRepository
 {
@@ -24,10 +25,11 @@ class DonationsRepository
 
     public function create($data)
     {
-        return response()->json($data);
+        Log::info($data);
         $donor = Donor::create([
             'customer_id' => $data['customer_id'],
             'email' => $data['email'],
+            'mode' => $data['mode'],
             'subscription_status' => $data['subscription_status']
         ]);
 
