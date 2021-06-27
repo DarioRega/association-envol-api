@@ -115,7 +115,7 @@ class DonationsService
 
     public function notify_new_donation($data){
         try {
-            Mail::to(config('env_variables.contact_mail_to'))->send(new DonationNotificationToEnvol($data));
+            Mail::to(config('env_variables.donation_mail_to'))->send(new DonationNotificationToEnvol($data));
             Mail::to($data['email'])->send(new DonationNotificationToDonatorMail($data));
             $result = [
                 'status' => 200,

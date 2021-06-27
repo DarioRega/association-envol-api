@@ -11,5 +11,6 @@ return [
     'front_url' => env('FRONT_URL'),
     'app_env' => env('APP_ENV'),
     'contact_mail_to'=> env('CONTACT_MAIL_TO'),
+    'donation_mail_to'=> env('DONATION_MAIL_TO'),
     'scholarship_mail_to'=> env('SCHOLARSHIP_MAIL_TO')
 ];
