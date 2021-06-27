@@ -27,6 +27,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Document whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Document whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $year_to_classify
+ * @property int $is_archived
+ * @method static \Illuminate\Database\Eloquent\Builder|Document whereIsArchived($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Document whereYearToClassify($value)
  */
 class Document extends Model
 {
