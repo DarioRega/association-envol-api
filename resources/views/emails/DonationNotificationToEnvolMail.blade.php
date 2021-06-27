@@ -41,9 +41,11 @@
     </div>
 
     <p>Vous pourrez trouver plus de détails sur le site internet de la plateforme utilisée :</p>
-    <a style="maring-top:25px;display:block;" href="https://dashboard.stripe.com/" target="_blank">Stripe</a>
-    <a style="maring-top:25px;display:block;" href="https://www.paypal.com/ch/signin" target="_blank">Paypal</a>
-
+    @if($details['payment_method'] == 'stripe')
+    <a style="maring-top:25px;display:block;" href="https://dashboard.stripe.com/payments" target="_blank">Stripe</a>
+    @else
+    <a style="maring-top:25px;display:block;" href="https://www.paypal.com/mep/dashboard" target="_blank">Paypal</a>
+    @endif
     <br/>
 
     <p><i>Ceci est un message automatique, merci de ne pas y répondre.</i></p>
