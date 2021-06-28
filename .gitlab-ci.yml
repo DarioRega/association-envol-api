@@ -1,5 +1,3 @@
-image: composer
-
 .deploy:
   stage: deploy
   before_script:
@@ -10,39 +8,41 @@ image: composer
     - chmod 700 ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - apt-get update -y
-    - apt-get install sshpass lftp
-    - apt-get -y install rsync
-    - cp .env.example.$DEPLOY_ENV .env
-    - echo -e "APP_NAME=$APP_NAME" >> .env
-    - echo -e "APP_KEY=$APP_KEY" >> .env
-    - echo -e "APP_URL=$APP_URL" >> .env
-    - echo -e "FRONT_URL=$FRONT_URL" >> .env
-    - echo -e "DB_HOST=$DB_HOST" >> .env
-    - echo -e "DB_DATABASE=$DB_DATABASE" >> .env
-    - echo -e "DB_USERNAME=$DB_USERNAME" >> .env
-    - echo -e "DB_PASSWORD=$DB_PASSWORD" >> .env
-    - echo -e "MAIL_HOST=$MAIL_HOST" >> .env
-    - echo -e "MAIL_USERNAME=$MAIL_USERNAME" >> .env
-    - echo -e "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env
-    - echo -e "SSH_PASSWORD=$SSH_PASSWORD" >> .env
-    - echo -e "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> .env
-    - echo -e "STRIPE_KEY=$STRIPE_KEY" >> .env
-    - echo -e "STRIPE_SECRET=$STRIPE_SECRET" >> .env
-    - echo -e "STRIPE_MAIN_DONATIONS_PRODUCT_ID=$STRIPE_MAIN_DONATIONS_PRODUCT_ID" >> .env
-    - echo -e "STRIPE_CUSTOM_DONATIONS_PRODUCT_ID=$STRIPE_CUSTOM_DONATIONS_PRODUCT_ID" >> .env
-    - echo -e "RAPPORTS_ACCESS_TOKEN=$RAPPORTS_ACCESS_TOKEN" >> .env
-    - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh . ehlu_drega_e@ehlu.ftp.infomaniak.com:/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
-    - composer install
-    - php artisan migrate --force
-    - php artisan optimize:clear
-    - exit
-
+    - ssh -o StrictHostKeyChecking=no ehlu_drega_e@ehlu.ftp.infomaniak.com
+      "source ~/.profile &&
+      cd $DEPLOY_PATH &&
+      git pull origin $CI_COMMIT_REF_NAME &&
+      cp .env.example.$DEPLOY_ENV .env &&
+      echo -e "APP_NAME=$APP_NAME" >> .env &&
+      echo -e "APP_KEY=$APP_KEY" >> .env &&
+      echo -e "APP_URL=$APP_URL" >> .env &&
+      echo -e "FRONT_URL=$FRONT_URL" >> .env &&
+      echo -e "DB_HOST=$DB_HOST" >> .env &&
+      echo -e "DB_DATABASE=$DB_DATABASE" >> .env &&
+      echo -e "DB_USERNAME=$DB_USERNAME" >> .env &&
+      echo -e "DB_PASSWORD=$DB_PASSWORD" >> .env &&
+      echo -e "MAIL_HOST=$MAIL_HOST" >> .env &&
+      echo -e "MAIL_USERNAME=$MAIL_USERNAME" >> .env &&
+      echo -e "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env &&
+      echo -e "SSH_PASSWORD=$SSH_PASSWORD" >> .env &&
+      echo -e "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> .env &&
+      echo -e "STRIPE_KEY=$STRIPE_KEY" >> .env &&
+      echo -e "STRIPE_SECRET=$STRIPE_SECRET" >> .env &&
+      echo -e "STRIPE_MAIN_DONATIONS_PRODUCT_ID=$STRIPE_MAIN_DONATIONS_PRODUCT_ID" >> .env &&
+      echo -e "STRIPE_CUSTOM_DONATIONS_PRODUCT_ID=$STRIPE_CUSTOM_DONATIONS_PRODUCT_ID" >> .env &&
+      echo -e "RAPPORTS_ACCESS_TOKEN=$RAPPORTS_ACCESS_TOKEN" >> .env &&
+      composer2 install --optimize-autoloader --no-dev &&
+      $PHP artisan config:cache &&
+      $PHP artisan route:cache &&
+      $PHP artisan view:cache &&
+      $PHP artisan migrate --force &&
+      exit"
+    - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh dist/ :/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
 
 deploy:production:
   extends: .deploy
   variables:
-    DEPLOY_PATH: sites/api.association-envol.info
+    DEPLOY_PATH: ~/sites/api.association-envol.info
     DEPLOY_ENV: production
     APP_NAME: $PRODUCTION_APP_NAME
     APP_KEY: $APP_KEY
@@ -68,7 +68,7 @@ deploy:production:
 deploy:staging:
   extends: .deploy
   variables:
-    DEPLOY_PATH: sites/api.staging.association-envol.info
+    DEPLOY_PATH: ~/sites/api.staging.association-envol.info
     DEPLOY_ENV: dev
     APP_NAME: $STG_APP_NAME
     APP_KEY: $APP_KEY
@@ -94,7 +94,7 @@ deploy:staging:
 deploy:dev:
   extends: .deploy
   variables:
-    DEPLOY_PATH: sites/api.dev.association-envol.info
+    DEPLOY_PATH: ~/sites/api.dev.association-envol.info
     DEPLOY_ENV: dev
     APP_KEY: $APP_KEY
     APP_URL: $DEV_APP_URL
