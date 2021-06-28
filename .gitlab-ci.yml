@@ -1,5 +1,7 @@
 .deploy:
   stage: deploy
+  variables:
+    PHP: /opt/php7.3/bin/php
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
