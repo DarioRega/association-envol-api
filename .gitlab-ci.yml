@@ -1,9 +1,4 @@
-image: node:12
-
-stages:
-  - deploy
-
-.deployBase:
+.deploy:
   stage: deploy
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -43,7 +38,7 @@ stages:
 
 
 deploy:production:
-  extends: .deployBase
+  extends: .deploy
   variables:
     DEPLOY_PATH: sites/api.association-envol.info
     DEPLOY_ENV: production
@@ -69,7 +64,7 @@ deploy:production:
     - master
 
 deploy:staging:
-  extends: .deployBase
+  extends: .deploy
   variables:
     DEPLOY_PATH: sites/api.staging.association-envol.info
     DEPLOY_ENV: dev
@@ -95,7 +90,7 @@ deploy:staging:
     - staging
 
 deploy:dev:
-  extends: .deployBase
+  extends: .deploy
   variables:
     DEPLOY_PATH: sites/api.dev.association-envol.info
     DEPLOY_ENV: dev
