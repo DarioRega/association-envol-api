@@ -1,0 +1,124 @@
+image: node:12
+
+stages:
+  - lint
+  - deploy
+lint:
+  stage: lint
+  before_script:
+    - npm install
+  script:
+    - npm run validate
+
+.deployBase:
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - apt-get update -y
+    - apt-get install sshpass lftp
+    - apt-get -y install rsync
+    - npm ci
+    - touch .env
+    - echo -e "APP_NAME=$APP_NAME" >> .env
+    - echo -e "APP_KEY=$APP_KEY" >> .env
+    - echo -e "APP_URL=$APP_URL" >> .env
+    - echo -e "FRONT_URL=$FRONT_URL" >> .env
+    - echo -e "DB_HOST=$DB_HOST" >> .env
+    - echo -e "DB_DATABASE=$DB_DATABASE" >> .env
+    - echo -e "DB_USERNAME=$DB_USERNAME" >> .env
+    - echo -e "DB_PASSWORD=$DB_PASSWORD" >> .env
+    - echo -e "MAIL_HOST=$MAIL_HOST" >> .env
+    - echo -e "MAIL_USERNAME=$MAIL_USERNAME" >> .env
+    - echo -e "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env
+    - echo -e "SSH_PASSWORD=$SSH_PASSWORD" >> .env
+    - echo -e "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> .env
+    - echo -e "STRIPE_KEY=$STRIPE_KEY" >> .env
+    - echo -e "STRIPE_SECRET=$STRIPE_SECRET" >> .env
+    - echo -e "STRIPE_MAIN_DONATIONS_PRODUCT_ID=$STRIPE_MAIN_DONATIONS_PRODUCT_ID" >> .env
+    - echo -e "STRIPE_CUSTOM_DONATIONS_PRODUCT_ID=$STRIPE_CUSTOM_DONATIONS_PRODUCT_ID" >> .env
+    - echo -e "RAPPORTS_ACCESS_TOKEN=$RAPPORTS_ACCESS_TOKEN" >> .env
+    - npm run build
+    - npm run generate
+    - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh dist/ ehlu_drega_e@ehlu.ftp.infomaniak.com:/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
+
+
+deploy:production:
+  extends: .deployBase
+  variables:
+    DEPLOY_PATH: sites/api.association-envol.info
+    APP_NAME: $PRODUCTION_APP_NAME
+    APP_KEY: $APP_KEY
+    APP_URL: $PRODUCTION_APP_URL
+    FRONT_URL: $PRODUCTION_FRONT_URL
+    DB_HOST: $DB_HOST
+    DB_DATABASE: $PRODUCTION_DB_DATABASE
+    DB_USERNAME: $DB_USERNAME
+    DB_PASSWORD: $DB_PASSWORD
+    MAIL_HOST: $MAIL_HOST
+    MAIL_USERNAME: $PRODUCTION_MAIL_USERNAME
+    MAIL_PASSWORD: $PRODUCTION_MAIL_PASSWORD
+    SSH_PASSWORD: $SSH_PASSWORD
+    SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+    STRIPE_KEY: $PRODUCTION_STRIPE_KEY
+    STRIPE_SECRET: $PRODUCTION_STRIPE_SECRET
+    STRIPE_MAIN_DONATIONS_PRODUCT_ID: $PRODUCTION_STRIPE_MAIN_DONATIONS_PRODUCT_ID
+    STRIPE_CUSTOM_DONATIONS_PRODUCT_ID: $PRODUCTION_STRIPE_CUSTOM_DONATIONS_PRODUCT_ID
+    RAPPORTS_ACCESS_TOKEN: $RAPPORTS_ACCESS_TOKEN
+  only:
+    - master
+
+deploy:staging:
+  extends: .deployBase
+  variables:
+    DEPLOY_PATH: sites/api.staging.association-envol.info
+    APP_NAME: $STG_APP_NAME
+    APP_KEY: $APP_KEY
+    APP_URL: $STG_APP_URL
+    FRONT_URL: $STG_FRONT_URL
+    DB_HOST: $DB_HOST
+    DB_DATABASE: $STG_DB_DATABASE
+    DB_USERNAME: $DB_USERNAME
+    DB_PASSWORD: $DB_PASSWORD
+    MAIL_HOST: $MAIL_HOST
+    MAIL_USERNAME: $STG_MAIL_USERNAME
+    MAIL_PASSWORD: $STG_MAIL_PASSWORD
+    SSH_PASSWORD: $SSH_PASSWORD
+    SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+    STRIPE_KEY: $TST_STRIPE_KEY
+    STRIPE_SECRET: $TST_STRIPE_SECRET
+    STRIPE_MAIN_DONATIONS_PRODUCT_ID: $TST_STRIPE_MAIN_DONATIONS_PRODUCT_ID
+    STRIPE_CUSTOM_DONATIONS_PRODUCT_ID: $TST_STRIPE_CUSTOM_DONATIONS_PRODUCT_ID
+    RAPPORTS_ACCESS_TOKEN: $RAPPORTS_ACCESS_TOKEN
+  only:
+    - staging
+
+deploy:dev:
+  extends: .deployBase
+  variables:
+    DEPLOY_PATH: sites/api.dev.association-envol.info
+    APP_NAME: $DEV_APP_NAME
+    APP_KEY: $APP_KEY
+    APP_URL: $DEV_APP_URL
+    FRONT_URL: $DEV_FRONT_URL
+    DB_HOST: $DB_HOST
+    DB_DATABASE: $DEV_DB_DATABASE
+    DB_USERNAME: $DB_USERNAME
+    DB_PASSWORD: $DB_PASSWORD
+    MAIL_HOST: $MAIL_HOST
+    MAIL_USERNAME: $DEV_MAIL_USERNAME
+    MAIL_PASSWORD: $DEV_MAIL_PASSWORD
+    SSH_PASSWORD: $SSH_PASSWORD
+    SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+    STRIPE_KEY: $TST_STRIPE_KEY
+    STRIPE_SECRET: $TST_STRIPE_SECRET
+    STRIPE_MAIN_DONATIONS_PRODUCT_ID: $TST_STRIPE_MAIN_DONATIONS_PRODUCT_ID
+    STRIPE_CUSTOM_DONATIONS_PRODUCT_ID: $TST_STRIPE_CUSTOM_DONATIONS_PRODUCT_ID
+    RAPPORTS_ACCESS_TOKEN: $RAPPORTS_ACCESS_TOKEN
+  only:
+    - develop
