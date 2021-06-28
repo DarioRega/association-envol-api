@@ -37,7 +37,6 @@
       $PHP artisan view:cache &&
       $PHP artisan migrate --force &&
       exit"
-    - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh dist/ :/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
 
 deploy:production:
   extends: .deploy
