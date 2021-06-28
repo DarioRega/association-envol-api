@@ -12,7 +12,7 @@
       "cd $DEPLOY_PATH &&
       git pull origin $CI_COMMIT_REF_NAME &&
       cp .env.example.$DEPLOY_ENV .env &&
-      echo -e 'APP_NAME=$APP_NAME' >> .env &&
+      echo -e 'APP_NAME=\"$APP_NAME\"' >> .env &&
       echo -e 'APP_KEY=$APP_KEY' >> .env &&
       echo -e 'APP_URL=$APP_URL' >> .env &&
       echo -e 'FRONT_URL=$FRONT_URL' >> .env &&
