@@ -27,6 +27,6 @@ class Donor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['customer_id', 'email'];
+    protected $fillable = ['customer_id', 'email', 'mode', 'subscription_status'];
 
 }

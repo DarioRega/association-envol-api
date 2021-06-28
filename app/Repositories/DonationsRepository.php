@@ -4,7 +4,6 @@
 namespace App\Repositories;
 
 use App\Models\Donor;
-use Illuminate\Support\Facades\Log;
 
 class DonationsRepository
 {
@@ -18,6 +17,12 @@ class DonationsRepository
     {
         return Donor::where('email', '=', $email)->get();
     }
+
+    public function getSingleByCustomerId($id)
+    {
+        return Donor::where('customer_id', '=', $id)->get();
+    }
+
     public function getAll()
     {
         return Donor::all();
@@ -25,15 +30,20 @@ class DonationsRepository
 
     public function create($data)
     {
-        Log::info(print_r($data, true));
-        $donor = Donor::create([
-            'customer_id' => $data['customer_id'],
-            'email' => $data['email'],
-            'mode' => $data['mode'],
-            'subscription_status' => $data['subscription_status']
-        ]);
+        $donor = Donor::create($data);
+        $donor->save();
+
+        return $donor;
+    }
+
+    public function updateSubscription($data)
+    {
+        $donor = $this->getSingleByCustomerId($data['customer_id']);
+        $donor->email = $data['email'];
+        $donor->subscription_status = $data['subscription_status'];
 
         $donor->save();
+
         return $donor;
     }
 

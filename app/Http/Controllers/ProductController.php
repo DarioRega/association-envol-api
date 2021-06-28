@@ -22,7 +22,7 @@ class ProductController extends Controller
     }
 
     public function index(){
-        $allPrices = $this->donationsService->getAllPrices();
+        $allPrices = $this->donationsService->get_all_prices();
         // TODO CHECK WHY
         return response()->json($allPrices);
 
@@ -56,11 +56,11 @@ class ProductController extends Controller
         $interval = $request->input('interval');
     }
 
-    public function findOrCreate(Request $request){
+    public function find_or_create(Request $request){
         $selected_amount = $request->input('selected_amount');
         $selected_interval = $request->input('selected_interval');
 
-        $price = $this->donationsService->findOrCreatePrice($selected_amount, $selected_interval);
+        $price = $this->donationsService->find_or_create_price($selected_amount, $selected_interval);
         return response()->json($price);
     }
 

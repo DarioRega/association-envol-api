@@ -30,6 +30,5 @@ class AddYearToClassifyDocuments extends Migration
         Schema::table('documents', function (Blueprint $table) {
             $table->dropColumn('year_to_classify', 'is_archived');
         });
-
     }
 }

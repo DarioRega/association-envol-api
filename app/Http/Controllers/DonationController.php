@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\DonationNotificationToEnvol;
 use App\Services\DonationsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Config;
 
 class DonationController extends Controller
 {
@@ -19,21 +15,18 @@ class DonationController extends Controller
         $this->donationsService = $donationsService;
     }
 
-    public function index(){
-        return response()->json($this->donationsService->getAll());
-    }
-
-    public function session(Request $request){
+    public function create_checkout_session(Request $request){
         $data = $request->only([
             'price',
             'client_session',
             'email',
         ]);
-        $sessionId =  $this->donationsService->createCheckoutSession($data) ;
+        $sessionId =  $this->donationsService->create_checkout_session($data) ;
      return response()->json(['id' => $sessionId]);
     }
 
-    public function stripeHooks(Request $request){
+
+    public function stripe_hooks(Request $request){
         $event = $request->getContent();
         // Parse the message body and check the signature
         $webhookSecret = config('env_variables.stripe_webhook_secret');
@@ -54,23 +47,22 @@ class DonationController extends Controller
     $object = $event['data']['object'];
 
     switch ($type) {
+        // TODO LISTEN WHEN CUSTOMER UPDATE HIS PROFILE TO UPDATE OUR DB RECORD
         case 'checkout.session.completed':
-            $this->donationsService->saveNewDonor($object);
-            // Payment is successful and the subscription is created.
-            // You should provision the subscription and save the customer ID to your database.
+            $donor = $this->donationsService->saveNewDonor($object);
+            // TODO create account and NOTIFY
+            break;
 
+        case 'customer.subscription.deleted':
+            $customer = $this->donationsService->cancelSubscription($object);
+            if($customer){
+                return response()->json($customer);
+            } else {
+                return response()->json(['message' => 'Customer subscription not found'], 404);
+            }
+            // TODO notify envol donators has stopped
             break;
-        case 'invoice.paid':
-            // Continue to provision the subscription as payments continue to be made.
-            // Store the status in your database and check when a user accesses your service.
-            // This approach helps you avoid hitting rate limits.
-            break;
-        case 'invoice.payment_failed':
-            // The payment failed or the customer does not have a valid payment method.
-            // The subscription becomes past_due. Notify your customer and send them to the
-            // customer portal to update their payment information.
-            break;
-        // ... handle other event types
+
         default:
             // Unhandled event type
     }
@@ -78,7 +70,7 @@ class DonationController extends Controller
     return response()->json([ 'status' => 'success' ]);
     }
 
-    public function thankYou(Request $request){
+    public function thank_you(Request $request){
         $data = $request->only([
             'amount',
             'interval',
@@ -90,24 +82,8 @@ class DonationController extends Controller
             'created_at',
             'selectedInterval'
         ]);
-        $result = [
-            'status' => 204,
-        ];
 
-        try {
-            Mail::to(config('env_variables.contact_mail_to'))->send(new DonationNotificationToEnvol($data));
-        } catch (\Swift_TransportException $e) {
-            Log::warning($e->getMessage());
-            $result = [
-                'status' => 400,
-                'message' => "Une erreur est survenue durant l'envoi du mail de confirmation. Cependant votre donation à été prise en compte."
-            ];
-        }
+        $result = $this->donationsService->notify_new_donation($data);
         return response()->json($result);
     }
-
-    public function manage(){
-        //
-    }
-
 }
