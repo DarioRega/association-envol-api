@@ -23,8 +23,7 @@ lint:
     - apt-get update -y
     - apt-get install sshpass lftp
     - apt-get -y install rsync
-    - npm ci
-    - touch .env
+    - cp .env.example.$DEPLOY_ENV .env
     - echo -e "APP_NAME=$APP_NAME" >> .env
     - echo -e "APP_KEY=$APP_KEY" >> .env
     - echo -e "APP_URL=$APP_URL" >> .env
@@ -43,15 +42,18 @@ lint:
     - echo -e "STRIPE_MAIN_DONATIONS_PRODUCT_ID=$STRIPE_MAIN_DONATIONS_PRODUCT_ID" >> .env
     - echo -e "STRIPE_CUSTOM_DONATIONS_PRODUCT_ID=$STRIPE_CUSTOM_DONATIONS_PRODUCT_ID" >> .env
     - echo -e "RAPPORTS_ACCESS_TOKEN=$RAPPORTS_ACCESS_TOKEN" >> .env
-    - npm run build
-    - npm run generate
     - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh dist/ ehlu_drega_e@ehlu.ftp.infomaniak.com:/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
+    - composer install
+    - php artisan migrate --force
+    - php artisan optimize:clear
+    - exit
 
 
 deploy:production:
   extends: .deployBase
   variables:
     DEPLOY_PATH: sites/api.association-envol.info
+    DEPLOY_ENV: production
     APP_NAME: $PRODUCTION_APP_NAME
     APP_KEY: $APP_KEY
     APP_URL: $PRODUCTION_APP_URL
@@ -77,6 +79,7 @@ deploy:staging:
   extends: .deployBase
   variables:
     DEPLOY_PATH: sites/api.staging.association-envol.info
+    DEPLOY_ENV: dev
     APP_NAME: $STG_APP_NAME
     APP_KEY: $APP_KEY
     APP_URL: $STG_APP_URL
@@ -102,14 +105,15 @@ deploy:dev:
   extends: .deployBase
   variables:
     DEPLOY_PATH: sites/api.dev.association-envol.info
+    DEPLOY_ENV: dev
     APP_NAME: $DEV_APP_NAME
-    APP_KEY: $APP_KEY
-    APP_URL: $DEV_APP_URL
+    APP_KEY: $DEV_APP_KEY
+    APP_URL: http://localhost:3000
     FRONT_URL: $DEV_FRONT_URL
     DB_HOST: $DB_HOST
-    DB_DATABASE: $DEV_DB_DATABASE
-    DB_USERNAME: $DB_USERNAME
-    DB_PASSWORD: $DB_PASSWORD
+    DB_DATABASE: envol_dev_db
+    DB_USERNAME: dev
+    DB_PASSWORD: qwertz123
     MAIL_HOST: $MAIL_HOST
     MAIL_USERNAME: $DEV_MAIL_USERNAME
     MAIL_PASSWORD: $DEV_MAIL_PASSWORD
