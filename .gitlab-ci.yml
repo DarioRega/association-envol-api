@@ -11,9 +11,7 @@
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
     - ssh -o StrictHostKeyChecking=no ehlu_drega_e@ehlu.ftp.infomaniak.com
-      "ls -a ~/ &&
-      source ~/.profile &&
-      cd $DEPLOY_PATH &&
+      "cd $DEPLOY_PATH &&
       git pull origin $CI_COMMIT_REF_NAME &&
       cp .env.example.$DEPLOY_ENV .env &&
       echo -e 'APP_NAME=$APP_NAME' >> .env &&
