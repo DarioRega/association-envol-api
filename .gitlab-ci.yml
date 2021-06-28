@@ -98,6 +98,7 @@ deploy:dev:
   extends: .deployBase
   variables:
     DEPLOY_PATH: sites/api.dev.association-envol.info
+    DEPLOY_ENV: dev
     APP_KEY: $APP_KEY
     APP_URL: $DEV_APP_URL
     FRONT_URL: $DEV_FRONT_URL
