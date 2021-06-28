@@ -33,6 +33,7 @@
       echo -e 'STRIPE_MAIN_DONATIONS_PRODUCT_ID=$STRIPE_MAIN_DONATIONS_PRODUCT_ID' >> .env &&
       echo -e 'STRIPE_CUSTOM_DONATIONS_PRODUCT_ID=$STRIPE_CUSTOM_DONATIONS_PRODUCT_ID' >> .env &&
       echo -e 'RAPPORTS_ACCESS_TOKEN=$RAPPORTS_ACCESS_TOKEN' >> .env &&
+      cat .env &&
       composer2 install --optimize-autoloader --no-dev &&
       $PHP artisan config:cache &&
       $PHP artisan route:cache &&
