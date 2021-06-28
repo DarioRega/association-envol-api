@@ -30,7 +30,7 @@
     - echo -e "STRIPE_MAIN_DONATIONS_PRODUCT_ID=$STRIPE_MAIN_DONATIONS_PRODUCT_ID" >> .env
     - echo -e "STRIPE_CUSTOM_DONATIONS_PRODUCT_ID=$STRIPE_CUSTOM_DONATIONS_PRODUCT_ID" >> .env
     - echo -e "RAPPORTS_ACCESS_TOKEN=$RAPPORTS_ACCESS_TOKEN" >> .env
-    - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh dist/ ehlu_drega_e@ehlu.ftp.infomaniak.com:/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
+    - sshpass -p $SSH_PASSWORD rsync --progress -avz -e ssh . ehlu_drega_e@ehlu.ftp.infomaniak.com:/home/clients/ce48751faad06eb8e1d97a6416bdd98d/$DEPLOY_PATH
     - composer install
     - php artisan migrate --force
     - php artisan optimize:clear
