@@ -46,7 +46,7 @@ deploy:staging:
   extends: .deploy
   variables:
     DEPLOY_PATH: ~/sites/api.staging.association-envol.info
-    DEPLOY_ENV: dev
+    DEPLOY_ENV: local
     APP_NAME: $STG_APP_NAME
     APP_KEY: $APP_KEY
     APP_URL: $STG_APP_URL
