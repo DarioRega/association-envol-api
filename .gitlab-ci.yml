@@ -1,0 +1,67 @@
+.deploy:
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh -o StrictHostKeyChecking=no ehlu_drega_e@ehlu.ftp.infomaniak.com
+      "cd $DEPLOY_PATH &&
+      git pull origin $CI_COMMIT_REF_NAME &&
+      cp .env.example.$DEPLOY_ENV .env &&
+      composer install --optimize-autoloader --no-dev &&
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan view:cache &&
+      php artisan migrate --force &&
+      exit"
+deploy:production:
+  extends: .deploy
+  variables:
+    DEPLOY_PATH: ~/sites/api.association-envol.info
+    DEPLOY_ENV: production
+    APP_NAME: $PRODUCTION_APP_NAME
+    APP_KEY: $APP_KEY
+    APP_URL: $PRODUCTION_APP_URL
+    FRONT_URL: $PRODUCTION_FRONT_URL
+    DB_HOST: $DB_HOST
+    DB_DATABASE: $PRODUCTION_DB_DATABASE
+    DB_USERNAME: $DB_USERNAME
+    DB_PASSWORD: $DB_PASSWORD
+    MAIL_HOST: $MAIL_HOST
+    MAIL_USERNAME: $PRODUCTION_MAIL_USERNAME
+    MAIL_PASSWORD: $PRODUCTION_MAIL_PASSWORD
+    STRIPE_KEY: $PRODUCTION_STRIPE_KEY
+    STRIPE_SECRET: $PRODUCTION_STRIPE_SECRET
+    STRIPE_MAIN_DONATIONS_PRODUCT_ID: $PRODUCTION_STRIPE_MAIN_DONATIONS_PRODUCT_ID
+    STRIPE_CUSTOM_DONATIONS_PRODUCT_ID: $PRODUCTION_STRIPE_CUSTOM_DONATIONS_PRODUCT_ID
+    RAPPORTS_ACCESS_TOKEN: $RAPPORTS_ACCESS_TOKEN
+  only:
+    - master
+
+deploy:staging:
+  extends: .deploy
+  variables:
+    DEPLOY_PATH: ~/sites/api.staging.association-envol.info
+    DEPLOY_ENV: dev
+    APP_NAME: $STG_APP_NAME
+    APP_KEY: $APP_KEY
+    APP_URL: $STG_APP_URL
+    FRONT_URL: $STG_FRONT_URL
+    DB_HOST: $DB_HOST
+    DB_DATABASE: $STG_DB_DATABASE
+    DB_USERNAME: $DB_USERNAME
+    DB_PASSWORD: $DB_PASSWORD
+    MAIL_HOST: $MAIL_HOST
+    MAIL_USERNAME: $STG_MAIL_USERNAME
+    MAIL_PASSWORD: $STG_MAIL_PASSWORD
+    STRIPE_KEY: $TST_STRIPE_KEY
+    STRIPE_SECRET: $TST_STRIPE_SECRET
+    STRIPE_MAIN_DONATIONS_PRODUCT_ID: $TST_STRIPE_MAIN_DONATIONS_PRODUCT_ID
+    STRIPE_CUSTOM_DONATIONS_PRODUCT_ID: $TST_STRIPE_CUSTOM_DONATIONS_PRODUCT_ID
+    RAPPORTS_ACCESS_TOKEN: $RAPPORTS_ACCESS_TOKEN
+  only:
+    - staging
